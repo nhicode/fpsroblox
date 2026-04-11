@@ -1,0 +1,2095 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>OLM Master v3.6</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#070b12;--bg2:#0b1018;--bg3:#0f1620;--bg4:#162030;
+  --panel:#111929;--panel2:#162235;
+  --teal:#00ddb5;--teal2:#00b893;--teal3:#006d5b;
+  --gold:#f5c842;--rose:#ff4f72;--lime:#6ee86a;--sky:#4db8f8;
+  --violet:#a78bfa;
+  --text:#eaf0f9;--text2:#7d9ab8;--text3:#3d5878;
+  --border:#1a2d42;--border2:#1f3650;
+  --r:10px;--r2:14px;
+  --shadow:0 4px 24px rgba(0,0,0,.45);
+}
+html,body{width:100%;min-height:100vh;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6;-webkit-text-size-adjust:100%}
+
+/* ── LOGIN ── */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(0,180,150,.07) 0%,transparent 70%)}
+.login-box{width:100%;max-width:380px;background:var(--panel);border:1px solid var(--border2);border-radius:20px;padding:36px 28px;position:relative;box-shadow:var(--shadow)}
+.login-box::before{content:'';position:absolute;top:0;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,var(--teal),transparent)}
+.login-head{text-align:center;margin-bottom:32px}
+.login-head .logo-ring{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--teal3),#003d33);border:1px solid rgba(0,221,181,.25);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--teal)}
+.login-head h1{font-family:'Space Mono',monospace;font-size:22px;color:var(--text);letter-spacing:-1px}
+.login-head h1 span{color:var(--teal)}
+.login-head p{font-size:12px;color:var(--text3);margin-top:5px}
+.lf{margin-bottom:14px}
+.lf label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:7px;font-weight:500}
+.lf input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:12px 15px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s,box-shadow .2s}
+.lf input:focus{border-color:var(--teal3);box-shadow:0 0 0 3px rgba(0,221,181,.08)}
+.login-btn{width:100%;margin-top:8px;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--teal3),#004d40);color:#fff;font-size:15px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;border:1px solid rgba(0,221,181,.2)}
+.login-btn:hover{background:linear-gradient(135deg,#008876,#005a4a);transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,180,150,.2)}
+.login-btn:active{transform:translateY(0)}
+.login-btn:disabled{opacity:.6;cursor:default;transform:none}
+
+/* ── APP SHELL ── */
+#app{display:none;min-height:100vh}
+#app.active{display:block}
+
+/* ── TOPBAR ── */
+.topbar{background:rgba(11,16,24,.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:50}
+.topbar-logo{display:flex;align-items:center;gap:10px}
+.topbar-icon{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--teal3),#004d40);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--teal);flex-shrink:0;border:1px solid rgba(0,221,181,.2)}
+.topbar-name{font-family:'Space Mono',monospace;font-size:14px;color:var(--text);font-weight:700}
+.topbar-name span{color:var(--teal)}
+.topbar-right{display:flex;align-items:center;gap:6px}
+.ver-badge{font-family:'Space Mono',monospace;font-size:9px;padding:3px 8px;border-radius:20px;background:rgba(0,221,181,.08);color:var(--teal);border:1px solid rgba(0,221,181,.15)}
+.logout-btn{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;background:none;border:1px solid var(--border2);color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.logout-btn:hover{border-color:var(--rose);color:var(--rose)}
+
+/* ── USER STRIP ── */
+.user-strip{background:var(--panel2);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px}
+.user-av{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--teal3),#003d33);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--teal);flex-shrink:0;border:1px solid rgba(0,221,181,.2)}
+.user-meta{flex:1;min-width:0}
+.user-name{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-tier-row{display:flex;align-items:center;gap:6px;margin-top:3px;flex-wrap:wrap}
+.tier-pill{font-size:10px;padding:2px 9px;border-radius:20px;font-weight:700;letter-spacing:.4px}
+.tier-free{background:rgba(61,88,120,.2);color:var(--text2);border:1px solid var(--border2)}
+.tier-vip{background:rgba(0,221,181,.1);color:var(--teal);border:1px solid rgba(0,221,181,.25)}
+.tier-ultra{background:rgba(245,200,66,.12);color:var(--gold);border:1px solid rgba(245,200,66,.3)}
+.uses-mini{font-size:11px;color:var(--text3)}
+.uses-mini span{color:var(--teal);font-family:'Space Mono',monospace;font-weight:700}
+.exam-mini{font-size:11px;color:var(--text3)}
+.exam-mini span{color:var(--gold);font-family:'Space Mono',monospace;font-weight:700}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(11,16,24,.97);backdrop-filter:blur(14px);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 4px 7px;gap:3px;cursor:pointer;font-size:10px;color:var(--text3);transition:color .15s;border:none;background:none;font-family:'DM Sans',sans-serif;-webkit-tap-highlight-color:transparent;position:relative}
+.bnav-item.active{color:var(--teal)}
+.bnav-item.active::after{content:'';position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--teal);border-radius:0 0 3px 3px}
+.bnav-icon{font-size:20px;line-height:1}
+
+/* ── PAGE ── */
+.page{display:none;padding:12px 16px 90px;animation:pgIn .18s ease}
+.page.active{display:block}
+@keyframes pgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── NO USES BANNER ── */
+.no-uses-banner{background:rgba(255,79,114,.05);border:1px solid rgba(255,79,114,.2);border-radius:var(--r2);padding:14px 16px;margin-bottom:10px;display:none}
+.no-uses-banner.show{display:block}
+.no-uses-title{font-size:13px;font-weight:600;color:var(--rose);margin-bottom:4px}
+.no-uses-sub{font-size:12px;color:var(--text2)}
+.no-uses-sub a{color:var(--teal);cursor:pointer;text-decoration:underline}
+
+/* ── CARDS ── */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:16px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.card-head{padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card-head h2{font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+.card-body{padding:16px}
+
+/* ── FORM ── */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:7px;font-weight:600}
+.field input,.field select{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:12px 15px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;-webkit-appearance:none;appearance:none;transition:border-color .2s,box-shadow .2s}
+.field input:focus,.field select:focus{border-color:var(--teal3);box-shadow:0 0 0 3px rgba(0,221,181,.08)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field-hint{font-size:11px;color:var(--text3);margin-top:5px}
+
+/* ── TOGGLE ── */
+.tog-row{display:flex;align-items:center;gap:12px;padding:10px 0}
+.tog{width:42px;height:24px;border-radius:12px;background:var(--bg4);border:1px solid var(--border2);position:relative;cursor:pointer;flex-shrink:0;transition:background .2s,border-color .2s}
+.tog.on{background:var(--teal3);border-color:var(--teal2)}
+.tog::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.tog.on::after{transform:translateX(18px)}
+.tog-label{font-size:13px;color:var(--text2);flex:1}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 18px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid;transition:all .15s;font-family:'DM Sans',sans-serif;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.4;cursor:default;transform:none}
+.btn-primary{background:rgba(0,221,181,.1);color:var(--teal);border-color:rgba(0,221,181,.25)}
+.btn-primary:hover{background:rgba(0,221,181,.18)}
+.btn-gold{background:rgba(245,200,66,.1);color:var(--gold);border-color:rgba(245,200,66,.3)}
+.btn-gold:hover{background:rgba(245,200,66,.18)}
+.btn-ghost{background:transparent;color:var(--text2);border-color:var(--border2)}
+.btn-ghost:hover{background:var(--bg3);color:var(--text)}
+.btn-rose{background:rgba(255,79,114,.08);color:var(--rose);border-color:rgba(255,79,114,.25)}
+.btn-full{width:100%;padding:14px}
+.btn-sm{padding:7px 13px;font-size:12px;border-radius:8px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ── STATS GRID ── */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.stat-box{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;position:relative;overflow:hidden}
+.stat-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.stat-box:nth-child(1)::before{background:linear-gradient(90deg,var(--teal),transparent)}
+.stat-box:nth-child(2)::before{background:linear-gradient(90deg,var(--sky),transparent)}
+.stat-box:nth-child(3)::before{background:linear-gradient(90deg,var(--lime),transparent)}
+.stat-box:nth-child(4)::before{background:linear-gradient(90deg,var(--gold),transparent)}
+.stat-box .n{font-family:'Space Mono',monospace;font-size:24px;font-weight:700;line-height:1}
+.stat-box .l{font-size:11px;color:var(--text3);margin-top:5px;text-transform:uppercase;letter-spacing:.5px}
+.c-teal{color:var(--teal)}.c-sky{color:var(--sky)}.c-lime{color:var(--lime)}.c-gold{color:var(--gold)}
+
+/* ── PROGRESS ── */
+.prog-wrap{margin:10px 0}
+.prog-top{display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px}
+.prog-label{color:var(--text2)}
+.prog-pct{font-family:'Space Mono',monospace;color:var(--teal);font-weight:700}
+.prog-bar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--teal2),var(--teal));transition:width .4s ease}
+.prog-lg .prog-bar{height:8px;border-radius:4px}
+
+/* ── LOG ── */
+.log-area{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-family:'Space Mono',monospace;font-size:11px;max-height:160px;overflow-y:auto;-webkit-overflow-scrolling:touch;margin-top:12px}
+.log-line{padding:2px 0;display:flex;gap:8px}
+.log-t{color:var(--text3);flex-shrink:0}
+.c-ok{color:var(--lime)}.c-err{color:var(--rose)}.c-info{color:var(--teal)}.c-warn{color:var(--gold)}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -18px;padding:0 18px}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:360px}
+thead th{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);font-weight:600;padding:8px 8px 10px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
+tbody tr{border-bottom:1px solid rgba(26,45,66,.5);transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+tbody td{padding:10px 8px;color:var(--text2);vertical-align:middle}
+.tbadge{display:inline-flex;align-items:center;font-size:10px;padding:3px 8px;border-radius:20px;white-space:nowrap;font-weight:600}
+.tbadge-video{background:rgba(0,221,181,.1);color:var(--teal);border:1px solid rgba(0,221,181,.2)}
+.tbadge-bt{background:rgba(110,232,106,.1);color:var(--lime);border:1px solid rgba(110,232,106,.2)}
+.tbadge-lt{background:rgba(77,184,248,.1);color:var(--sky);border:1px solid rgba(77,184,248,.2)}
+.tbadge-kt{background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.2)}
+input[type=checkbox]{width:16px;height:16px;accent-color:var(--teal);cursor:pointer}
+
+/* ── LINK PAGE ── */
+.link-wrap{position:relative;margin-bottom:14px}
+.link-inp{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:13px 15px 13px 42px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s,box-shadow .2s}
+.link-inp:focus{border-color:var(--teal3);box-shadow:0 0 0 3px rgba(0,221,181,.07)}
+.link-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none}
+.type-chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 11px;border-radius:20px;margin-bottom:12px;opacity:0;transition:opacity .2s;pointer-events:none}
+.type-chip.show{opacity:1;pointer-events:auto}
+.exam-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px;display:none}
+.exam-box.show{display:block}
+.exam-box-title{font-size:12px;font-weight:600;color:var(--gold);margin-bottom:12px}
+.ultra-lock{margin-top:10px;padding:9px 12px;background:rgba(255,95,126,.06);border:1px solid rgba(255,95,126,.2);border-radius:8px;font-size:12px;color:var(--text3)}
+.exam-nq-info{font-size:12px;color:var(--teal);margin:6px 0 8px;font-family:'Space Mono',monospace;display:none}
+.exam-nq-info.show{display:block}
+
+/* ── KEY PAGE ── */
+.key-hero{background:rgba(0,221,181,.04);border:1px solid rgba(0,221,181,.18);border-radius:16px;padding:20px 18px;position:relative;overflow:hidden;margin-bottom:14px}
+.key-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--teal),transparent)}
+.key-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:8px;font-weight:600}
+.key-val{font-family:'Space Mono',monospace;font-size:13px;color:var(--teal);margin-bottom:16px;word-break:break-all;padding:8px 10px;background:rgba(0,221,181,.06);border-radius:8px;border:1px solid rgba(0,221,181,.12)}
+.key-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}@media(min-width:400px){.key-stats{grid-template-columns:repeat(4,1fr)}}
+.key-stat{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center}
+.key-stat .n{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--teal)}
+.key-stat .s{font-size:10px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:.4px}
+.key-activate{margin-top:14px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:16px;display:none}
+.key-activate.show{display:block}
+.key-activate-title{font-size:12px;font-weight:700;color:var(--gold);margin-bottom:12px}
+.key-activate-step{font-size:12px;color:var(--text3);margin-bottom:6px}
+.key-activate-link{display:block;font-size:11px;color:var(--teal);word-break:break-all;margin-bottom:12px;text-decoration:underline;cursor:pointer}
+.key-inp{width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:11px 14px;color:var(--text);font-size:13px;font-family:'Space Mono',monospace;outline:none;margin-bottom:10px;transition:border-color .2s}
+.key-inp:focus{border-color:var(--teal3)}
+
+/* ── TIER CARDS ── */
+.tier-list{display:flex;flex-direction:column;gap:10px}
+.tier-card{border-radius:14px;padding:16px;border:1px solid;position:relative;overflow:hidden}
+.tc-free{background:rgba(22,34,53,.5);border-color:var(--border2)}
+.tc-vip{background:rgba(0,221,181,.04);border-color:rgba(0,221,181,.18)}
+.tc-vip::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal3),transparent)}
+.tc-ultra{background:rgba(245,200,66,.04);border-color:rgba(245,200,66,.18)}
+.tc-ultra::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent)}
+.tc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.tc-name{font-size:14px;font-weight:700}
+.tc-price{font-size:11px;color:var(--text3)}
+.tc-feats{display:flex;flex-direction:column;gap:6px}
+.tc-feat{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
+.feat-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+
+/* ── PAID MSG ── */
+.paid-msg{background:rgba(0,221,181,.05);border:1px solid rgba(0,221,181,.18);border-radius:16px;padding:24px 18px;text-align:center;margin-bottom:14px;display:none}
+.paid-msg.show{display:block}
+
+/* ── HELP ── */
+.help-sec{margin-bottom:22px}
+.help-sec h3{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:6px;font-weight:700}
+.help-rows{display:flex;flex-direction:column;gap:8px}
+.help-row{background:var(--bg3);border-radius:12px;padding:12px 15px;display:flex;flex-direction:column;gap:5px;border:1px solid var(--border)}
+.help-key{font-size:12px;color:var(--text);font-weight:600}
+.help-val{font-size:13px;color:var(--text2);line-height:1.5}
+.contact-box{background:rgba(245,200,66,.04);border:1px solid rgba(245,200,66,.18);border-radius:14px;padding:18px}
+.contact-box h3{font-size:14px;color:var(--gold);margin-bottom:8px;font-weight:700}
+.contact-box p{font-size:13px;color:var(--text2);margin-bottom:14px}
+
+
+/* AD BANNER */
+.canva-ad{margin:14px 0;padding:14px 16px;border-radius:12px;background:linear-gradient(135deg,rgba(124,77,255,.12),rgba(0,188,212,.1));border:1px solid rgba(124,77,255,.3);display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.canva-ad::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#7c4dff,#00bcd4,transparent)}
+.canva-ad:hover{background:linear-gradient(135deg,rgba(124,77,255,.2),rgba(0,188,212,.15));transform:translateY(-1px)}
+.canva-ad-ico{font-size:26px;flex-shrink:0}
+.canva-ad-body{flex:1;min-width:0}
+.canva-ad-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.canva-ad-sub{font-size:11px;color:rgba(255,255,255,.6)}
+.canva-ad-btn{flex-shrink:0;padding:7px 14px;border-radius:8px;background:linear-gradient(135deg,#7c4dff,#00bcd4);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.canva-ad-badge{position:absolute;top:8px;right:8px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(245,200,66,.15);border:1px solid rgba(245,200,66,.3);color:var(--gold);font-family:'Space Mono',monospace;letter-spacing:.3px}
+
+/* NEW USER MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
+.overlay.show{display:flex}
+.modal-box{background:var(--panel);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:420px;position:relative;overflow:hidden}
+.modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal),transparent)}
+.modal-hd{padding:16px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-hd h3{font-size:15px;font-weight:700;color:var(--text)}
+.modal-bd{padding:16px}
+
+/* CANVA MODAL */
+.canva-modal-box{background:var(--panel);border:1px solid rgba(124,77,255,.4);border-radius:16px;width:100%;max-width:440px;position:relative;overflow:hidden}
+.canva-modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#7c4dff,#00bcd4,transparent)}
+.step-indicator{display:flex;align-items:center;gap:6px;margin-bottom:18px}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:'Space Mono',monospace;border:2px solid var(--border2);color:var(--text3);transition:all .2s;flex-shrink:0}
+.step-dot.done{background:rgba(0,229,196,.15);border-color:var(--teal);color:var(--teal)}
+.step-dot.active{background:linear-gradient(135deg,rgba(124,77,255,.2),rgba(0,188,212,.15));border-color:#7c4dff;color:#fff}
+.step-line{flex:1;height:2px;background:var(--border);border-radius:1px}
+.step-line.done{background:var(--teal)}
+.key-step-box{background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:14px;margin-bottom:14px}
+.key-step-title{font-size:12px;font-weight:600;color:var(--gold);margin-bottom:10px}
+
+/* AD INFO STRIP */
+.ad-info-strip{background:rgba(0,229,196,.04);border:1px solid rgba(0,229,196,.12);border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.ad-info-strip span{font-size:12px;color:var(--text2)}
+.ad-info-strip strong{color:var(--teal)}
+
+/* ── TOAST ── */
+.toast-wrap{position:fixed;bottom:80px;left:16px;right:16px;display:flex;flex-direction:column;gap:8px;z-index:400;pointer-events:none}
+.toast{background:var(--panel2);border:1px solid var(--border2);border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:10px;font-size:13px;pointer-events:auto;animation:tin .2s ease;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+@keyframes tin{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+.toast.out{animation:tout .18s ease forwards}
+@keyframes tout{to{opacity:0;transform:translateY(6px)}}
+.toast-ok{border-left:3px solid var(--lime)}
+.toast-err{border-left:3px solid var(--rose)}
+.toast-info{border-left:3px solid var(--teal)}
+.toast-warn{border-left:3px solid var(--gold)}
+.tdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.toast-ok .tdot{background:var(--lime)}.toast-err .tdot{background:var(--rose)}
+.toast-info .tdot{background:var(--teal)}.toast-warn .tdot{background:var(--gold)}
+
+/* LIVE DOT */
+.live{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--lime);margin-right:5px;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ── DESKTOP ── */
+@media(min-width:700px){
+  .bottom-nav{display:none}
+  .page{padding:22px 26px 40px}
+  #app.active{display:grid;grid-template-columns:220px 1fr;grid-template-rows:auto auto 1fr;min-height:100vh}
+  .topbar,.user-strip{grid-column:1/-1}
+  .sidebar-desk{display:flex;flex-direction:column;background:var(--panel);border-right:1px solid var(--border);padding:14px 10px;gap:2px}
+  .content-desk{overflow:auto}
+  .desk-nav-item{display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:all .15s;border:1px solid transparent}
+  .desk-nav-item:hover{background:var(--bg4);color:var(--text)}
+  .desk-nav-item.active{background:rgba(0,221,181,.08);color:var(--teal);border-color:rgba(0,221,181,.15)}
+  .desk-nav-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:.5}
+  .desk-nav-item.active .desk-nav-dot{opacity:1;box-shadow:0 0 6px currentColor}
+  .desk-nav-sep{height:1px;background:var(--border);margin:8px 0}
+  .desk-nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);padding:6px 13px 2px;font-weight:600}
+  .stats-grid{grid-template-columns:repeat(4,1fr)}
+  .toast-wrap{bottom:24px;max-width:400px}
+}
+@media(max-width:699px){
+  .sidebar-desk{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-head">
+      <div class="logo-ring">OLM</div>
+      <h1>OLM <span>MASTER</span></h1>
+      <p>v3.6 · Auto Solver · by Người anh yêu quý</p>
+    </div>
+    <div class="lf">
+      <label>Tên đăng nhập OLM</label>
+      <input id="lu" type="text" placeholder="Nhập username OLM" autocomplete="username">
+    </div>
+    <div class="lf">
+      <label>Mật khẩu</label>
+      <div style="position:relative">
+        <input id="lp" type="password" placeholder="Nhập mật khẩu" autocomplete="current-password" style="padding-right:46px">
+        <button type="button" onclick="toggleLoginPass()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:4px" id="eyeBtn">👁</button>
+      </div>
+    </div>
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">Đăng nhập →</button>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:14px">
+      <input type="checkbox" id="rememberMe" style="width:14px;height:14px;accent-color:var(--teal);cursor:pointer">
+      <label for="rememberMe" style="font-size:12px;color:var(--text3);cursor:pointer;user-select:none">Ghi nhớ mật khẩu</label>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="topbar-icon">OLM</div>
+      <div class="topbar-name">OLM <span>MASTER</span></div>
+    </div>
+    <div class="topbar-right">
+      <span class="ver-badge">v3.6</span>
+      <div style="position:relative">
+        <button class="logout-btn" id="bellBtn" onclick="toggleNotifPanel()" style="padding:6px 10px;font-size:16px;position:relative" title="Thông báo">
+          🔔
+          <span id="notifBadge" style="display:none;position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:var(--rose);color:#fff;font-size:9px;font-weight:700;align-items:center;justify-content:center;font-family:'Space Mono',monospace"></span>
+        </button>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Đăng xuất</button>
+    </div>
+  </div>
+
+  <!-- User strip -->
+  <div class="user-strip">
+    <div class="user-av" id="uAv">--</div>
+    <div class="user-meta">
+      <div class="user-name" id="uName">–</div>
+      <div class="user-tier-row">
+        <span class="tier-pill" id="uTier">FREE</span>
+        <span class="uses-mini">📋 BT: <span id="uUses">–</span></span>
+        <span class="exam-mini" id="uExamWrap" style="display:none">📝 KT: <span id="uExamUses">0</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Desktop sidebar -->
+  <div class="sidebar-desk">
+    <div class="desk-nav-label">Chức năng</div>
+    <div class="desk-nav-item active" id="dn-scan" onclick="nav('scan',this)">
+      <div class="desk-nav-dot"></div>Bài chưa làm
+    </div>
+    <div class="desk-nav-item" id="dn-link" onclick="nav('link',this)">
+      <div class="desk-nav-dot"></div>Giải từ link
+    </div>
+    <div class="desk-nav-sep"></div>
+    <div class="desk-nav-label">Hệ thống</div>
+    <div class="desk-nav-item" id="dn-key" onclick="nav('key',this)">
+      <div class="desk-nav-dot"></div>Quản lý key
+    </div>
+    <div class="desk-nav-item" id="dn-help" onclick="nav('help',this)">
+      <div class="desk-nav-dot"></div>Hướng dẫn
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-desk">
+
+    <!-- ═══ PAGE: SCAN ═══ -->
+    <div class="page active" id="page-scan">
+
+      <!-- Cảnh báo hết lượt -->
+      <div class="no-uses-banner" id="noUsesBanner">
+        <div class="no-uses-title">⊘ Hết lượt bài thường</div>
+        <div class="no-uses-sub">Hãy <a onclick="navMobile('key',document.getElementById('bn-key'));nav('key',document.getElementById('dn-key'))">tạo key mới</a> để tiếp tục (miễn phí, tối đa 2 key/ngày) · Hoặc liên hệ admin mua lượt kiểm tra 📝</div>
+      </div>
+
+      <!-- Re-login alert (0 bài quét) -->
+      <div id="reloginAlert" style="display:none;margin-bottom:12px;padding:13px 16px;border-radius:12px;background:rgba(255,183,0,.07);border:1px solid rgba(255,183,0,.35)">
+        <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:5px">⚠️ Không tìm thấy bài — Cần đăng nhập lại</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6">Phiên OLM có thể đã hết hạn hoặc bạn đang đăng nhập ở nhiều nơi cùng lúc (2 tab / thiết bị khác). Đăng xuất và đăng nhập lại để làm mới phiên.</div>
+        <button class="btn btn-rose btn-sm" onclick="doLogout()">🔄 Đăng xuất & Đăng nhập lại</button>
+      </div>
+
+      <!-- Strip mua lẻ + phản hồi (luôn hiện) -->
+      <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+        <button onclick="showExamBuyModal()" style="flex:1;min-width:140px;padding:9px 14px;border-radius:10px;background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.35);color:var(--gold);font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:7px;justify-content:center">
+          <span>📝</span> Mua lẻ bài kiểm tra
+        </button>
+        <button onclick="openFeedback()" style="flex:1;min-width:140px;padding:9px 14px;border-radius:10px;background:rgba(91,192,248,.08);border:1px solid rgba(91,192,248,.25);color:var(--sky);font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:7px;justify-content:center">
+          <span>💬</span> Gửi phản hồi
+        </button>
+      </div>
+
+      <!-- Quảng cáo: ẩn OLM Pro với VIP/Ultra, giữ Canva+Apps -->
+      <div id="mainAdBlock" style="margin-bottom:8px">
+        <!-- OLM Pro upgrade -->
+        <div style="margin-bottom:8px;border-radius:14px;overflow:hidden;background:linear-gradient(135deg,#0d1f35 0%,#0f2a20 100%);border:1px solid rgba(0,221,181,.2);position:relative">
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal),var(--gold),var(--teal))"></div>
+          <div id="olmProRow" style="padding:14px 16px;display:flex;align-items:center;gap:12px">
+            <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--teal3),#004d40);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:1px solid rgba(0,221,181,.25)">🚀</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:2px">OLM Master <span style="color:var(--gold)">Pro</span> — Không giới hạn</div>
+              <div style="font-size:11px;color:var(--text3)">Làm bài kiểm tra · Lượt không giới hạn · Ưu tiên hỗ trợ 24/7</div>
+            </div>
+            <a href="https://zalo.me/0352470535" target="_blank" style="flex-shrink:0;padding:8px 14px;border-radius:9px;background:linear-gradient(135deg,var(--teal3),#004d40);border:1px solid rgba(0,221,181,.3);color:var(--teal);font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;font-family:'DM Sans',sans-serif">Nâng cấp →</a>
+          </div>
+          <!-- Canva mini row -->
+          <div onclick="openCanvaModal()" style="cursor:pointer;padding:8px 16px 10px;border-top:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:8px;background:rgba(245,200,66,.04)" onmouseover="this.style.background='rgba(245,200,66,.08)'" onmouseout="this.style.background='rgba(245,200,66,.04)'">
+            <span style="font-size:14px">🎨</span>
+            <span style="font-size:11px;color:rgba(245,200,66,.8);flex:1">Nhận <strong style="color:var(--gold)">Canva Pro EDU 5 ngày</strong> miễn phí — xử lý trong 24h</span>
+            <span style="font-size:10px;color:var(--gold);font-weight:700">Nhận ngay →</span>
+          </div>
+        </div>
+        <!-- Mua app pro khác -->
+        <div onclick="openAppsModal()" style="cursor:pointer;margin-bottom:10px;padding:12px 16px;border-radius:12px;background:linear-gradient(135deg,rgba(167,139,250,.08),rgba(91,192,248,.06));border:1px solid rgba(167,139,250,.25);display:flex;align-items:center;gap:12px" onmouseover="this.style.background='linear-gradient(135deg,rgba(167,139,250,.14),rgba(91,192,248,.1))'" onmouseout="this.style.background='linear-gradient(135deg,rgba(167,139,250,.08),rgba(91,192,248,.06))'">
+          <div style="display:flex;gap:-4px;flex-shrink:0">
+            <span style="font-size:20px">✨</span>
+            <span style="font-size:20px;margin-left:-2px">🤖</span>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:1px">Mua tài khoản app Pro</div>
+            <div style="font-size:10px;color:var(--text3)">ChatGPT · Canva · CapCut · Duolingo · và nhiều hơn</div>
+          </div>
+          <span style="font-size:11px;color:var(--violet);font-weight:700;white-space:nowrap;flex-shrink:0">Xem ngay →</span>
+        </div>
+      </div>
+
+      <!-- Cấu hình quét -->
+      <div class="card">
+        <div class="card-head"><h2>⚙️ Cấu hình quét</h2></div>
+        <div class="card-body">
+          <div class="field-row">
+            <div class="field">
+              <label>Số trang quét</label>
+              <input type="number" id="scanPages" value="3" min="1" max="100">
+              <div class="field-hint">Mặc định 3 · Tối đa 100</div>
+            </div>
+            <div class="field">
+              <label>Chế độ</label>
+              <select id="scanMode">
+                <option value="pending">Chưa làm</option>
+                <option value="all">Tất cả (kể cả đã làm)</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-full" id="scanBtn" onclick="startScan()">▸ Bắt đầu quét</button>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="card" id="progCard" style="display:none">
+        <div class="card-body">
+          <div class="prog-wrap prog-lg">
+            <div class="prog-top">
+              <span class="prog-label"><span class="live"></span><span id="progLbl">Đang quét…</span></span>
+              <span class="prog-pct" id="progPct">0%</span>
+            </div>
+            <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+          </div>
+          <div class="log-area" id="scanLog"></div>
+        </div>
+      </div>
+
+      <!-- Kết quả -->
+      <div class="card" id="resCard" style="display:none">
+        <div class="card-head">
+          <h2>📋 Kết quả quét</h2>
+          <div class="btn-row">
+            <button class="btn btn-ghost btn-sm" onclick="selectAll()">Chọn tất</button>
+            <button class="btn btn-primary btn-sm" id="solveBtn" onclick="solveSelected()">▸ Giải</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="stats-grid">
+            <div class="stat-box"><div class="n c-teal" id="cV">0</div><div class="l">Video</div></div>
+            <div class="stat-box"><div class="n c-sky" id="cL">0</div><div class="l">Lý thuyết</div></div>
+            <div class="stat-box"><div class="n c-lime" id="cB">0</div><div class="l">Bài tập</div></div>
+            <div class="stat-box"><div class="n c-gold" id="cK">0</div><div class="l">Kiểm tra</div></div>
+          </div>
+          
+          <!-- Cài đặt VIP trong trang quét -->
+          <div id="scanAdvSettings" style="display:none; background:rgba(0,221,181,.05); border:1px solid rgba(0,221,181,.2); border-radius:12px; padding:14px; margin-bottom:14px">
+            <div style="font-size:13px; font-weight:700; color:var(--teal); margin-bottom:10px">⚙️ Tùy chỉnh (VIP & ULTRA)</div>
+            <div class="field-row">
+                <div style="margin-bottom:0">
+                    <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-weight:600;display:block;margin-bottom:4px">T.Gian KT (phút)</label>
+                    <input type="number" id="scanExamMin" placeholder="Mặc định" style="width:100%; background:var(--bg3); border:1px solid var(--border2); border-radius:8px; padding:8px 12px; color:var(--text); outline:none">
+                </div>
+                <div style="margin-bottom:0">
+                    <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-weight:600;display:block;margin-bottom:4px">Điểm mục tiêu (%)</label>
+                    <input type="number" id="scanTargetPct" placeholder="100" min="0" max="100" style="width:100%; background:var(--bg3); border:1px solid var(--border2); border-radius:8px; padding:8px 12px; color:var(--text); outline:none">
+                </div>
+            </div>
+            <div style="font-size:11px;color:var(--text3);margin-top:8px">Áp dụng cho mọi Bài tập & Kiểm tra được chọn để giải.</div>
+          </div>
+
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr>
+                <th style="width:28px"><input type="checkbox" id="chkAll" onchange="toggleAll(this)"></th>
+                <th>Tên bài</th><th>Môn</th><th>Loại</th><th>Trạng thái</th>
+              </tr></thead>
+              <tbody id="resBody"></tbody>
+            </table>
+          </div>
+          <!-- Solve progress -->
+          <div id="solveProgWrap" style="display:none;margin-top:14px">
+            <div class="prog-wrap">
+              <div class="prog-top">
+                <span class="prog-label"><span class="live"></span><span id="solveLbl">Đang nộp…</span></span>
+                <span class="prog-pct" id="solvePct">0%</span>
+              </div>
+              <div class="prog-bar"><div class="prog-fill" id="solveFill" style="width:0%"></div></div>
+            </div>
+            <div class="log-area" id="solveLog"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE: LINK ═══ -->
+    <div class="page" id="page-link">
+      <div class="card">
+        <div class="card-head"><h2>🔗 Giải từ link</h2></div>
+        <div class="card-body">
+
+          <!-- URL input -->
+          <div class="link-wrap">
+            <span class="link-ico">🔗</span>
+            <input class="link-inp" id="linkInp" type="url"
+              placeholder="https://olm.vn/bai-tap/..." oninput="onLinkInput()">
+          </div>
+
+          <!-- Type chip -->
+          <div class="type-chip" id="typeChip">
+            <span id="typeIco">📝</span>
+            <span id="typeNm" style="font-size:12px">–</span>
+          </div>
+
+          <!-- Lock notice (kiểm tra + không phải ultra + không có lượt KT) -->
+          <div id="examLock" style="display:none;margin-bottom:12px">
+            <div style="background:rgba(245,200,66,.06);border:1px solid rgba(245,200,66,.3);border-radius:12px;padding:14px 16px">
+              <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:8px">📝 Bài kiểm tra — Cần nâng cấp</div>
+              <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Bài kiểm tra yêu cầu <strong style="color:#fff">ULTRA VIP</strong> hoặc mua lẻ từng lượt. Chọn phương án phù hợp:</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <a href="https://zalo.me/0352470535" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:9px;background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.3);text-decoration:none">
+                  <span style="font-size:18px">💰</span>
+                  <div style="flex:1">
+                    <div style="font-size:12px;font-weight:700;color:var(--gold)">Mua lẻ lượt kiểm tra</div>
+                    <div style="font-size:10px;color:var(--text3)">Trả theo bài · Liên hệ Zalo admin</div>
+                  </div>
+                  <span style="font-size:11px;color:var(--gold);font-weight:700">→</span>
+                </a>
+                <a href="https://zalo.me/0352470535" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:9px;background:rgba(0,221,181,.06);border:1px solid rgba(0,221,181,.2);text-decoration:none">
+                  <span style="font-size:18px">✦</span>
+                  <div style="flex:1">
+                    <div style="font-size:12px;font-weight:700;color:var(--teal)">Nâng cấp ULTRA VIP</div>
+                    <div style="font-size:10px;color:var(--text3)">Không giới hạn · Tùy chỉnh điểm · Canva EDU free</div>
+                  </div>
+                  <span style="font-size:11px;color:var(--teal);font-weight:700">→</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Advanced Settings (VIP / ULTRA) -->
+          <div class="exam-box" id="advSettingsBox" style="background:rgba(0,221,181,.05);border:1px solid rgba(0,221,181,.2); display:none">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+              <div class="exam-box-title" style="margin-bottom:0;color:var(--teal)">⚙️ Cài đặt nâng cao (VIP & ULTRA)</div>
+            </div>
+            <div class="field">
+              <label>Thời gian làm bài KT (phút)</label>
+              <input type="number" id="examMin" value="" placeholder="Để trống = Mặc định">
+              <div class="field-hint">Chỉ áp dụng cho bài Kiểm tra</div>
+            </div>
+            <!-- Tùy chỉnh điểm -->
+            <div>
+              <div class="tog-row" style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px 12px;margin:4px 0">
+                <div class="tog" id="togScore" onclick="toggleCustomScore()" style="transition:background .2s"></div>
+                <div>
+                  <div class="tog-label" style="font-weight:600;color:var(--teal)">Tùy chỉnh số câu đúng</div>
+                  <div style="font-size:11px;color:var(--text3);margin-top:1px">Áp dụng cho cả Bài tập & Kiểm tra</div>
+                </div>
+              </div>
+              <div id="customScoreWrap" style="display:none;margin-top:10px;padding:12px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid var(--border2)">
+                <div id="examNqInfo" class="exam-nq-info"></div>
+                <div class="field" style="margin-bottom:10px">
+                  <label>Số câu muốn làm đúng</label>
+                  <input type="number" id="examCorrect" value="" min="0" placeholder="Nhập số câu hoặc để trống">
+                </div>
+                <button class="btn btn-ghost btn-sm" onclick="fetchExamInfo()">🔍 Lấy tổng số câu (từ link)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Canva ad + Apps ad (link page) -->
+          <div id="linkAdBlock">
+            <div onclick="openCanvaModal()" style="cursor:pointer;margin-bottom:8px;padding:11px 14px;border-radius:10px;background:linear-gradient(135deg,rgba(245,200,66,.08),rgba(245,160,0,.05));border:1px solid rgba(245,200,66,.35);display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='rgba(245,200,66,.6)'" onmouseout="this.style.borderColor='rgba(245,200,66,.35)'">
+              <span style="font-size:20px">🎨</span>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:12px;font-weight:700;color:var(--gold)">Nhận Canva Pro EDU miễn phí!</div>
+                <div style="font-size:10px;color:rgba(245,200,66,.5)">5 ngày · Free · Xử lý trong 24h</div>
+              </div>
+              <span style="font-size:11px;color:var(--gold);font-weight:600;white-space:nowrap">Nhận →</span>
+            </div>
+            <div onclick="openAppsModal()" style="cursor:pointer;margin-bottom:12px;padding:10px 14px;border-radius:10px;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);display:flex;align-items:center;gap:10px" onmouseover="this.style.background='rgba(167,139,250,.12)'" onmouseout="this.style.background='rgba(167,139,250,.06)'">
+              <span style="font-size:18px">✨</span>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:12px;font-weight:700;color:var(--violet)">Mua app Pro: ChatGPT · Canva · CapCut…</div>
+                <div style="font-size:10px;color:var(--text3)">Liên hệ admin — giá tốt</div>
+              </div>
+              <span style="font-size:11px;color:var(--violet);font-weight:600;white-space:nowrap">Xem →</span>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-full" id="solveLinkBtn" onclick="solveLink()">▸ Giải bài này</button>
+
+          <!-- Link progress -->
+          <div id="linkProg" style="display:none;margin-top:14px">
+            <div class="prog-wrap">
+              <div class="prog-top">
+                <span class="prog-label"><span class="live"></span><span id="linkLbl">Đang xử lý…</span></span>
+              </div>
+              <div class="prog-bar"><div class="prog-fill" id="linkFill" style="width:0%;transition:width .5s"></div></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE: KEY ═══ -->
+    <div class="page" id="page-key">
+
+      <!-- FREE: key hero -->
+      <div id="keyHero">
+        <div class="key-hero">
+          <div class="key-label">KEY HIỆN TẠI</div>
+          <div class="key-val" id="keyVal">OLMFREE-XXXX-XXXX-XXXX</div>
+          <div class="key-stats">
+            <div class="key-stat"><div class="n" id="kRem">–</div><div class="s">Lượt BT</div></div>
+            <div class="key-stat"><div class="n" id="kExam" style="color:var(--gold)">0</div><div class="s">Lượt KT</div></div>
+            <div class="key-stat"><div class="n" id="kToday">–</div><div class="s">Key hôm nay</div></div>
+            <div class="key-stat"><div class="n" id="kLeft">–</div><div class="s">Còn tạo (/ 2)</div></div>
+          </div>
+          <!-- Exam uses notice -->
+          <div id="examUsesNotice" style="display:none;margin-top:10px;padding:10px 12px;background:rgba(245,200,66,.06);border:1px solid rgba(245,200,66,.2);border-radius:8px;font-size:12px;color:var(--text2)">
+            📝 Bạn có <strong id="examUsesCount" style="color:var(--gold)">0</strong> lượt bài kiểm tra — liên hệ admin để mua thêm
+          </div>
+          <button class="btn btn-primary btn-full" id="genKeyBtn" onclick="genKey()">⚡ Tạo key mới</button>
+
+          <!-- Activation box -->
+          <div class="key-activate" id="keyActivate">
+            <div class="key-activate-title">⚡ Kích hoạt key</div>
+            <div class="key-activate-step">1. Mở link bên dưới và hoàn thành xác thực:</div>
+            <a id="keyLink" class="key-activate-link" href="#" target="_blank">–</a>
+            <div class="key-activate-step">2. Sao chép key từ trang đó và dán vào đây:</div>
+            <input class="key-inp" id="keyEntered" type="text" placeholder="OLMFREE-DDMM-XXXX-XXXX">
+            <div style="display:flex;gap:8px;margin-top:2px">
+              <button class="btn btn-primary" style="flex:1" onclick="verifyKey()">✓ Kích hoạt</button>
+              <button class="btn btn-ghost btn-sm" onclick="cancelKey()">Huỷ</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIP / Ultra: không cần key -->
+      <div class="paid-msg" id="keyPaidMsg">
+        <div style="font-size:28px;margin-bottom:10px">✦</div>
+        <div style="font-size:14px;font-weight:600;color:var(--teal);margin-bottom:6px">Tài khoản không cần key</div>
+        <div style="font-size:13px;color:var(--text3)">VIP & Ultra VIP được dùng không giới hạn — key chỉ dành cho tài khoản FREE.</div>
+      </div>
+
+      <!-- Tier info -->
+      <div class="tier-list">
+        <div class="tier-card tc-free">
+          <div class="tc-head">
+            <span class="tc-name" style="color:var(--text2)">FREE</span>
+            <span class="tc-price">5 lượt/key · 2 key/ngày</span>
+          </div>
+          <div class="tc-feats">
+            <div class="tc-feat"><div class="feat-dot" style="background:var(--lime)"></div>Bài tập · Video · Lý thuyết</div>
+            <div class="tc-feat" style="opacity:.55"><div class="feat-dot" style="background:var(--gold)"></div>Kiểm tra: mua lẻ theo bài</div>
+          </div>
+        </div>
+        <div class="tier-card tc-vip">
+          <div class="tc-head">
+            <span class="tc-name" style="color:var(--teal)">VIP</span>
+            <span class="tc-price">Không giới hạn lượt</span>
+          </div>
+          <div class="tc-feats">
+            <div class="tc-feat"><div class="feat-dot" style="background:var(--lime)"></div>Bài tập · Video · Lý thuyết</div>
+            <div class="tc-feat"><div class="feat-dot" style="background:var(--teal)"></div>Tùy chỉnh điểm luyện tập</div>
+            <div class="tc-feat" style="opacity:.35"><div class="feat-dot" style="background:var(--text3)"></div>Bài kiểm tra</div>
+          </div>
+        </div>
+        <div class="tier-card tc-ultra">
+          <div class="tc-head">
+            <span class="tc-name" style="color:var(--gold)">ULTRA VIP ✦</span>
+            <span class="tc-price">Mọi tính năng</span>
+          </div>
+          <div class="tc-feats">
+            <div class="tc-feat"><div class="feat-dot" style="background:var(--lime)"></div>Bài tập · Video · Lý thuyết</div>
+            <div class="tc-feat"><div class="feat-dot" style="background:var(--gold)"></div>Kiểm tra + Tùy chỉnh điểm</div>
+            <div class="tc-feat"><div class="feat-dot" style="background:var(--violet)"></div>🎨 Tặng 1 Canva EDU 5 ngày miễn phí</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE: HELP ═══ -->
+    <div class="page" id="page-help">
+      <div class="help-sec">
+        <h3 style="color:var(--teal)">▸ Bắt đầu nhanh</h3>
+        <div class="help-rows">
+          <div class="help-row">
+            <div class="help-key">1. Đăng nhập</div>
+            <div class="help-val">Dùng tài khoản OLM thật — tool tự nhận tier VIP/Ultra từ danh sách admin.</div>
+          </div>
+          <div class="help-row">
+            <div class="help-key">2. Quét bài (Bài chưa làm)</div>
+            <div class="help-val">Chọn số trang → Bắt đầu quét → Tick chọn bài → Giải. Chế độ "Tất cả" quét kể cả bài đã làm.</div>
+          </div>
+          <div class="help-row">
+            <div class="help-key">3. Giải từ link</div>
+            <div class="help-val">Dán link OLM → tool tự nhận loại bài → điền cài đặt nếu cần → Giải.</div>
+          </div>
+        </div>
+      </div>
+      <div class="contact-box">
+        <h3>💛 Hỗ trợ & nâng cấp</h3>
+        <p>Liên hệ admin để hỗ trợ, mua VIP, hoặc mua lẻ lượt bài kiểm tra:</p>
+        <a class="btn btn-gold" href="https://zalo.me/0352470535" target="_blank" style="margin-bottom:8px;display:inline-flex">📞 Zalo · 0352470535</a>
+        <button class="btn btn-ghost" onclick="openFeedback()" style="margin-top:6px;width:100%;border-color:rgba(91,192,248,.25);color:var(--sky)">💬 Gửi phản hồi cho admin</button>
+        <button class="btn btn-ghost" onclick="openAppsModal()" style="margin-top:6px;width:100%;border-color:rgba(167,139,250,.25);color:var(--violet)">✨ Mua tài khoản App Pro</button>
+        <div style="margin-top:10px;padding:10px 12px;background:rgba(245,200,66,.04);border:1px solid rgba(245,200,66,.15);border-radius:8px;font-size:12px;color:var(--text3)">
+          💡 <strong style="color:var(--gold)">Mua lẻ lượt KT:</strong> Admin cấp lượt bài kiểm tra cho tài khoản FREE · Không cần nâng cấp VIP
+        </div>
+      </div>
+      <!-- Quảng cáo tinh tế -->
+      <div style="margin-top:12px;padding:10px 14px;border-radius:8px;background:rgba(245,200,66,.04);border:1px solid rgba(245,200,66,.1);display:flex;align-items:center;gap:10px">
+        <span style="font-size:16px">💎</span>
+        <span style="font-size:12px;color:var(--text3)">Muốn dùng app pro đầy đủ tính năng? Ib ủng hộ admin nhé — SĐT: <span style="color:var(--gold)">0352470535</span></span>
+      </div>
+    </div>
+
+  </div><!-- /content-desk -->
+
+  <!-- Bottom nav -->
+  <div class="bottom-nav">
+    <button class="bnav-item active" id="bn-scan" onclick="navMobile('scan',this)">
+      <div class="bnav-icon">📋</div>Quét bài
+    </button>
+    <button class="bnav-item" id="bn-link" onclick="navMobile('link',this)">
+      <div class="bnav-icon">🔗</div>Từ link
+    </button>
+    <button class="bnav-item" id="bn-key" onclick="navMobile('key',this)">
+      <div class="bnav-icon">🔑</div>Key
+    </button>
+    <button class="bnav-item" id="bn-help" onclick="navMobile('help',this)">
+      <div class="bnav-icon">❓</div>Hướng dẫn
+    </button>
+  </div>
+</div><!-- /app -->
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ── Config ──────────────────────────────────────────────────────────────
+// API rỗng = cùng origin (Railway serve cả HTML lẫn API)
+const API = '';
+
+// ── State ────────────────────────────────────────────────────────────────
+let user = null, token = null, asgns =[];
+
+// ── Helpers ──────────────────────────────────────────────────────────────
+const $  = id => document.getElementById(id);
+const hdr = () => ({ 'X-Token': token });
+const jhdr = () => ({ 'Content-Type': 'application/json',
+    'ngrok-skip-browser-warning': 'true', 'X-Token': token });
+
+async function api(path, opts = {}) {
+  const res = await fetch(API + path, opts);
+  return res.json();
+}
+
+function toast(msg, type = 'info') {
+  const wrap = $('toastWrap');
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.innerHTML = `<div class="tdot"></div><span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 200); }, 3200);
+}
+
+function logLine(areaId, msg, type) {
+  const el = $(areaId);
+  if (!el) return;
+  const t = new Date().toLocaleTimeString('vi', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const cls = { ok: 'c-ok', err: 'c-err', info: 'c-info', warn: 'c-warn' }[type] || 'c-info';
+  el.innerHTML += `<div class="log-line"><span class="log-t">${t}</span><span class="${cls}">${msg}</span></div>`;
+  el.scrollTop = el.scrollHeight;
+}
+
+// ── NAV ──────────────────────────────────────────────────────────────────
+function nav(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  $('page-' + name).classList.add('active');
+  document.querySelectorAll('.desk-nav-item').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  // sync bottom nav
+  const map = { scan: 'bn-scan', link: 'bn-link', key: 'bn-key', help: 'bn-help' };
+  document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
+  if (map[name]) $(map[name])?.classList.add('active');
+}
+
+function navMobile(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  $('page-' + name).classList.add('active');
+  document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  const dmap = { scan: 'dn-scan', link: 'dn-link', key: 'dn-key', help: 'dn-help' };
+  document.querySelectorAll('.desk-nav-item').forEach(b => b.classList.remove('active'));
+  if (dmap[name]) $(dmap[name])?.classList.add('active');
+}
+
+function showHelp() {
+  // Trước khi đăng nhập, show help page bằng cách tạm hiện app read-only
+  toast('Hãy đăng nhập để dùng tool', 'info');
+}
+
+// ── AUTH ─────────────────────────────────────────────────────────────────
+async function doLogin() {
+  const u = $('lu').value.trim().toLowerCase();
+  const p = $('lp').value.trim();
+  if (!u || !p) { toast('Nhập đầy đủ thông tin', 'warn'); return; }
+
+  const btn = $('loginBtn');
+  btn.textContent = 'Đang đăng nhập…'; btn.disabled = true;
+
+  try {
+    const data = await api('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: u, password: p })
+    });
+
+    if (data.ok) {
+      token = data.token;
+      const isUnlim = data.tier === 'vip' || data.tier === 'ultra';
+      user = {
+        name: data.uname, tier: data.tier || 'free',
+        remain:         isUnlim ? null : (data.remain ?? 0),
+        exam_remain:    isUnlim ? null : (data.exam_remain ?? 0),
+        total:          data.total || 3,
+        max_keys:       data.max_keys || 2,
+        first_verified: data.first_verified ?? 1
+      };
+      // Ghi nhớ mật khẩu
+      if ($('rememberMe')?.checked) {
+        try { localStorage.setItem('olm_cred', JSON.stringify({u: $('lu').value.trim(), p: $('lp').value.trim()})); } catch(e) {}
+      } else {
+        try { localStorage.removeItem('olm_cred'); } catch(e) {}
+      }
+      showApp();
+      startNotifPoll();
+      // Check gate trước khi toast
+      if (!isUnlim && !data.first_verified) {
+        showGateScreen();
+        return;
+      }
+      toast('Đăng nhập thành công', 'ok');
+      if (!isUnlim) loadKeyStatus();
+      // Chào mừng user mới FREE
+      if (data.is_new_user && data.tier === 'free' && !data.new_user_bonus_done) {
+        setTimeout(() => checkNewUser(data), 600);
+      }
+    } else {
+      toast(data.msg || 'Đăng nhập thất bại', 'err');
+      btn.textContent = 'Đăng nhập'; btn.disabled = false;
+    }
+  } catch (e) {
+    toast('Không kết nối được server', 'err');
+    btn.textContent = 'Đăng nhập'; btn.disabled = false;
+  }
+}
+
+function showApp() {
+  $('loginScreen').style.display = 'none';
+  $('app').classList.add('active');
+  updateUser();
+}
+
+async function doLogout() {
+  try { await api('/api/logout', { method: 'POST', headers: hdr() }); } catch (e) {}
+  // token không được lưu — chỉ credentials
+  user = null; token = null; asgns =[];
+  if (_notifTimer) { clearInterval(_notifTimer); _notifTimer = null; }
+  const modal = $('notifModal'); if (modal) modal.classList.remove('show');
+  _unreadNotifs =[];
+  $('loginScreen').style.display = '';
+  $('app').classList.remove('active');
+  $('loginBtn').textContent = 'Đăng nhập'; $('loginBtn').disabled = false;
+  $('lu').value = ''; $('lp').value = '';
+}
+
+// ── REMEMBER PASSWORD (không tự đăng nhập, chỉ điền sẵn) ────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem('olm_cred') || 'null');
+    if (saved) {
+      $('lu').value = saved.u || '';
+      $('lp').value = saved.p || '';
+      $('rememberMe').checked = true;
+    }
+  } catch(e) {}
+});
+
+function updateUser() {
+  if (!user) return;
+  $('uAv').textContent = (user.name||'??').slice(0, 2).toUpperCase();
+  $('uName').textContent = user.name;
+  const tp = $('uTier');
+  const isUnlim = user.tier === 'vip' || user.tier === 'ultra';
+
+  if (user.tier === 'ultra') { tp.textContent = '✦ ULTRA VIP'; tp.className = 'tier-pill tier-ultra'; }
+  else if (user.tier === 'vip') { tp.textContent = '✧ VIP'; tp.className = 'tier-pill tier-vip'; }
+  else { tp.textContent = 'FREE'; tp.className = 'tier-pill tier-free'; }
+
+  $('uUses').textContent = isUnlim ? '∞' : `${user.remain ?? 0}/${user.total}`;
+
+  // Hiển thị lượt KT nếu có
+  const examEl = $('uExamWrap');
+  const examCount = $('uExamUses');
+  if (examEl && examCount) {
+    const examRem = user.exam_remain ?? 0;
+    if (!isUnlim && examRem > 0) {
+      examCount.textContent = examRem;
+      examEl.style.display = '';
+    } else if (user.tier === 'ultra') {
+      examEl.style.display = '';
+      examCount.textContent = '∞';
+    } else {
+      examEl.style.display = 'none';
+    }
+  }
+
+  // Cảnh báo hết lượt (FREE)
+  const outOfUses = !isUnlim && (user.remain ?? 0) <= 0 && (user.exam_remain ?? 0) <= 0;
+  $('noUsesBanner').classList.toggle('show', outOfUses);
+
+  // Cập nhật hiển thị Cài đặt nâng cao dựa trên Tier
+  if (user.tier === 'vip' || user.tier === 'ultra') {
+      $('advSettingsBox').style.display = 'block';
+      $('scanAdvSettings').style.display = 'block';
+  } else {
+      $('advSettingsBox').style.display = 'none';
+      $('scanAdvSettings').style.display = 'none';
+  }
+
+  // VIP/Ultra: ẩn nút "Nâng cấp →" nhưng vẫn hiện Canva + Apps
+  const olmProRow = $('olmProRow');
+  if (olmProRow) olmProRow.style.display = isUnlim ? 'none' : '';
+  updateKeyPage();
+}
+
+// ── SCAN ─────────────────────────────────────────────────────────────────
+async function startScan() {
+  const pages = Math.max(1, parseInt($('scanPages').value) || 3);
+  const mode  = $('scanMode').value; // pending | all
+  const isUnlim = user && (user.tier === 'vip' || user.tier === 'ultra');
+
+  if (!isUnlim && (user?.remain ?? 0) <= 0) {
+    toast('Hết lượt — hãy tạo key mới trước', 'err'); return;
+  }
+
+  $('progCard').style.display = '';
+  $('resCard').style.display  = 'none';
+  $('scanLog').innerHTML = '';
+  asgns =[];
+  setP(0, 'Đang kết nối…');
+  $('scanBtn').disabled = true;
+  logLine('scanLog', `Bắt đầu quét ${pages} trang (${mode === 'all' ? 'tất cả' : 'chưa làm'})…`, 'info');
+
+  try {
+    setP(15, 'Đang tải dữ liệu…');
+    const data = await api(`/api/assignments?pages=${pages}&mode=${mode}`, { headers: hdr() });
+    setP(90, 'Đang xử lý…');
+
+    if (data.ok) {
+      asgns = data.assignments;
+      setP(100, 'Hoàn tất');
+      if (asgns.length === 0) {
+        logLine('scanLog', '⚠ Không tìm thấy bài nào!', 'warn');
+        logLine('scanLog', '💡 Bạn có thể đang đăng nhập ở 2 nơi (2 tab / thiết bị khác). Hãy đăng nhập lại để làm mới phiên.', 'warn');
+        $('reloginAlert').style.display = '';
+      } else {
+        logLine('scanLog', `Tìm thấy ${asgns.length} bài — Video:${data.stats.video} LT:${data.stats.ly_thuyet} BT:${data.stats.bai_tap} KT:${data.stats.kiem_tra}`, 'ok');
+        if (mode === 'all') logLine('scanLog', `Đã làm:${data.stats.da_lam} / Chưa làm:${asgns.length - data.stats.da_lam}`, 'info');
+        $('reloginAlert').style.display = 'none';
+        setTimeout(renderResults, 350);
+      }
+    } else {
+      setP(0, 'Lỗi');
+      logLine('scanLog', data.msg || 'Lỗi khi quét', 'err');
+      toast(data.msg || 'Lỗi khi quét', 'err');
+    }
+  } catch (e) {
+    setP(0, 'Lỗi kết nối');
+    logLine('scanLog', 'Không kết nối được server', 'err');
+    toast('Không kết nối được server', 'err');
+  } finally {
+    $('scanBtn').disabled = false;
+  }
+}
+
+function setP(pct, lbl) {
+  $('progFill').style.width = pct + '%';
+  $('progPct').textContent  = pct + '%';
+  $('progLbl').textContent  = lbl;
+}
+
+function renderResults() {
+  const body = $('resBody');
+  body.innerHTML = '';
+  let v = 0, lt = 0, bt = 0, kt = 0;
+  asgns.forEach((a, i) => {
+    if (a.type === 'Video') v++;
+    else if (a.type === 'Lý thuyết') lt++;
+    else if (a.type === 'Kiểm tra') kt++;
+    else bt++;
+
+    const tc = { 'Video': 'tbadge-video', 'Lý thuyết': 'tbadge-lt', 'Kiểm tra': 'tbadge-kt', 'Bài tập': 'tbadge-bt' }[a.type] || 'tbadge-bt';
+    const stStyle = a.done ? 'color:var(--text3)' : 'color:var(--lime)';
+    // Mặc định tick bài chưa làm
+    const checked = !a.done ? 'checked' : '';
+    body.innerHTML += `<tr>
+      <td><input type="checkbox" class="ac" data-i="${i}" ${checked}></td>
+      <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${a.title}">${a.title}</td>
+      <td style="white-space:nowrap">${a.subject}</td>
+      <td><span class="tbadge ${tc}">${a.type}</span></td>
+      <td style="font-size:11px;${stStyle};white-space:nowrap">${a.status}</td>
+    </tr>`;
+  });
+  $('cV').textContent = v; $('cL').textContent = lt;
+  $('cB').textContent = bt; $('cK').textContent = kt;
+  $('resCard').style.display = '';
+  $('solveProgWrap').style.display = 'none';
+}
+
+function selectAll() {
+  document.querySelectorAll('.ac').forEach(c => c.checked = true);
+  $('chkAll').checked = true;
+}
+function toggleAll(el) {
+  document.querySelectorAll('.ac').forEach(c => c.checked = el.checked);
+}
+
+async function solveSelected() {
+  const checked =[...document.querySelectorAll('.ac:checked')];
+  if (!checked.length) { toast('Chưa chọn bài nào', 'warn'); return; }
+
+  const isUnlim = user && (user.tier === 'vip' || user.tier === 'ultra');
+  const isUltra = user?.tier === 'ultra';
+  // Check if any selected is exam type
+  const hasExam = checked.some(c => asgns[parseInt(c.dataset.i)]?.is_kiem_tra);
+  const hasFreeExam = (user?.exam_remain ?? 0) > 0;
+  if (hasExam && !isUltra && !hasFreeExam) {
+    showExamBuyModal(); return;
+  }
+  if (!isUnlim && (user?.remain ?? 0) <= 0 && !hasExam) {
+    toast('Hết lượt — hãy tạo key mới', 'err'); return;
+  }
+
+  // Đọc cài đặt tùy chỉnh
+  let tcorr_pct = null;
+  let esec = null;
+  if (isUnlim) {
+      const rawPct = parseInt($('scanTargetPct').value);
+      if (!isNaN(rawPct)) tcorr_pct = Math.max(0, Math.min(100, rawPct));
+      
+      const rawMin = parseInt($('scanExamMin').value);
+      if (!isNaN(rawMin) && rawMin > 0) esec = rawMin * 60;
+  }
+
+  const sw = $('solveProgWrap'); sw.style.display = '';
+  $('solveLog').innerHTML = '';
+  $('solveBtn').disabled  = true;
+  const total = checked.length; let done = 0, okCnt = 0;
+
+  for (let ci = 0; ci < checked.length; ci++) {
+    const idx = parseInt(checked[ci].dataset.i);
+    const a   = asgns[idx];
+    $('solveLbl').textContent = `Bài ${ci + 1}/${total}: ${a.title.slice(0, 24)}…`;
+
+    try {
+      const data = await api('/api/solve', {
+        method: 'POST', headers: jhdr(),
+        body: JSON.stringify({ assignment: a, exam_sec: esec, target_correct_pct: tcorr_pct })
+      });
+      done++;
+      const pct = Math.round(done / total * 100);
+      $('solveFill').style.width  = pct + '%';
+      $('solvePct').textContent   = pct + '%';
+
+      if (data.ok) {
+        okCnt++;
+        logLine('solveLog', `${a.title.slice(0, 30)}: ✓ ${data.msg}`, 'ok');
+      } else {
+        logLine('solveLog', `${a.title.slice(0, 30)}: ✗ ${data.msg}`, 'err');
+      }
+      // Cập nhật lượt còn FREE
+      if (data.remain != null && user) { user.remain = data.remain; if (data.exam_remain != null) user.exam_remain = data.exam_remain; updateUser(); }
+    } catch (e) {
+      done++;
+      logLine('solveLog', `${a.title.slice(0, 30)}: ✗ Lỗi kết nối`, 'err');
+    }
+    // Delay nhẹ giữa các bài
+    if (ci < checked.length - 1) await sleep(800);
+  }
+
+  $('solveLbl').textContent = `Hoàn tất — ${okCnt}/${total} thành công`;
+  toast(`Đã xử lý ${total} bài (${okCnt} OK)`, okCnt === total ? 'ok' : 'warn');
+  $('solveBtn').disabled = false;
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// ── LINK ─────────────────────────────────────────────────────────────────
+function onLinkInput() {
+  const url   = $('linkInp').value;
+  const chip  = $('typeChip');
+  const isKT  = url.includes('kiem-tra');
+  const isVid = url.includes('video');
+  const isLT  = url.includes('ly-thuyet');
+  const isUltra = user?.tier === 'ultra';
+
+  if (!url.includes('olm.vn')) {
+    chip.classList.remove('show');
+    $('examLock').style.display = 'none';
+    return;
+  }
+
+  // Type chip
+  let ico, nm, bg, clr;
+  if (isKT)       { ico = '📋'; nm = 'Bài kiểm tra'; bg = 'rgba(245,200,66,.08)'; clr = 'rgba(245,200,66,.25)'; }
+  else if (isVid) { ico = '🎬'; nm = 'Video';         bg = 'rgba(0,229,196,.08)';  clr = 'rgba(0,229,196,.25)'; }
+  else if (isLT)  { ico = '📖'; nm = 'Lý thuyết';     bg = 'rgba(91,192,248,.08)'; clr = 'rgba(91,192,248,.25)'; }
+  else            { ico = '📝'; nm = 'Bài tập';        bg = 'rgba(124,242,117,.08)'; clr = 'rgba(124,242,117,.25)'; }
+
+  $('typeIco').textContent = ico;
+  $('typeNm').textContent  = nm;
+  chip.style.cssText = `background:${bg};border:1px solid ${clr};border-radius:20px;padding:4px 11px;opacity:1`;
+  chip.classList.add('show');
+
+  // Lock notice: kiểm tra + không có quyền
+  const hasFreeExam = (user?.exam_remain ?? 0) > 0;
+  $('examLock').style.display = (isKT && !isUltra && !hasFreeExam) ? '' : 'none';
+}
+
+function toggleCustomScore() {
+  const tog = $('togScore');
+  tog.classList.toggle('on');
+  const on = tog.classList.contains('on');
+  $('customScoreWrap').style.display = on ? '' : 'none';
+  if (!on) { $('examNqInfo').classList.remove('show'); $('examCorrect').value = ''; }
+}
+
+async function fetchExamInfo() {
+  const url = $('linkInp').value.trim();
+  if (!url.includes('olm.vn')) { toast('Nhập link trước', 'warn'); return; }
+  try {
+    const data = await api('/api/exam-info', {
+      method: 'POST', headers: jhdr(),
+      body: JSON.stringify({ url })
+    });
+    if (data.ok && data.total_questions > 0) {
+      const nq = data.total_questions;
+      const el = $('examNqInfo');
+      el.textContent = `📊 Bài này có ${nq} câu hỏi`;
+      el.classList.add('show');
+      $('examCorrect').max  = nq;
+      $('examCorrect').placeholder = `0–${nq} (Enter = tất cả)`;
+      toast(`Bài có ${nq} câu hỏi`, 'info');
+    } else {
+      toast('Không lấy được số câu — thử nhập thủ công', 'warn');
+    }
+  } catch (e) {
+    toast('Lỗi kết nối', 'err');
+  }
+}
+
+async function solveLink() {
+  const url = $('linkInp').value.trim();
+  if (!url) { toast('Nhập link OLM', 'warn'); return; }
+  if (!url.includes('olm.vn')) { toast('Link phải là olm.vn', 'err'); return; }
+
+  const isUnlim = user && (user.tier === 'vip' || user.tier === 'ultra');
+  if (!isUnlim && (user?.remain ?? 0) <= 0) {
+    toast('Hết lượt — hãy tạo key mới', 'err'); return;
+  }
+
+  // Exam & Custom Settings
+  const isKT = url.includes('kiem-tra');
+  let examSec = null;
+  let targetCorrect = null;
+
+  if (isUnlim) {
+      const rawMin = parseInt($('examMin').value);
+      if (isKT && rawMin > 0) examSec = rawMin * 60;
+      
+      const useCustom = $('togScore').classList.contains('on');
+      const rawCorrect = parseInt($('examCorrect').value);
+      if (useCustom && !isNaN(rawCorrect)) targetCorrect = rawCorrect;
+  }
+
+  const lp = $('linkProg');
+  const lf = $('linkFill');
+  const ll = $('linkLbl');
+  lp.style.display = '';
+  lf.style.width   = '0%';
+  ll.textContent   = 'Đang phân tích…';
+  $('solveLinkBtn').disabled = true;
+
+  try {
+    lf.style.width = '25%'; ll.textContent = 'Đang kết nối…';
+    const data = await api('/api/solve-link', {
+      method: 'POST', headers: jhdr(),
+      body: JSON.stringify({ url, exam_sec: examSec, target_correct: targetCorrect })
+    });
+    lf.style.width = '100%';
+    ll.textContent = data.ok ? `✓ ${data.msg}` : `✗ ${data.msg}`;
+
+    // Cập nhật type chip với kết quả thật từ server
+    if (data.type) {
+      $('typeNm').textContent = data.type;
+      $('typeChip').classList.add('show');
+    }
+    toast(data.msg, data.ok ? 'ok' : 'err');
+    if (data.remain != null && user) { user.remain = data.remain; updateUser(); }
+  } catch (e) {
+    lf.style.width = '0%'; ll.textContent = '✗ Lỗi kết nối';
+    toast('Không kết nối được server', 'err');
+  } finally {
+    $('solveLinkBtn').disabled = false;
+  }
+}
+
+// ── KEY ──────────────────────────────────────────────────────────────────
+function updateKeyPage() {
+  if (!user) return;
+  const isPaid = user.tier === 'vip' || user.tier === 'ultra';
+  $('keyHero').style.display    = isPaid ? 'none' : '';
+  $('keyPaidMsg').classList.toggle('show', isPaid);
+}
+
+async function loadKeyStatus() {
+  try {
+    const d = await api('/api/key/status', { headers: hdr() });
+    if (d.key) $('keyVal').textContent = d.key;
+    $('kRem').textContent   = d.remain;
+    $('kToday').textContent = d.keys_today;
+    $('kLeft').textContent  = d.keys_left;
+    // Exam uses
+    const examRem = d.exam_remain ?? (user?.exam_remain ?? 0);
+    if ($('kExam')) $('kExam').textContent = examRem;
+    const notice = $('examUsesNotice');
+    if (notice) {
+      if (examRem > 0) {
+        notice.style.display = '';
+        if ($('examUsesCount')) $('examUsesCount').textContent = examRem;
+      } else {
+        notice.style.display = 'none';
+      }
+    }
+    if (user) { user.remain = d.remain; if (d.exam_remain != null) user.exam_remain = d.exam_remain; updateUser(); }
+  } catch (e) {}
+}
+
+async function genKey() {
+  if (user?.tier === 'vip' || user?.tier === 'ultra') {
+    toast('VIP & Ultra VIP không cần key', 'warn'); return;
+  }
+  const btn = $('genKeyBtn');
+  btn.textContent = 'Đang tạo…'; btn.disabled = true;
+
+  try {
+    const data = await api('/api/key/start', { method: 'POST', headers: hdr() });
+    btn.textContent = '⚡ Tạo key mới'; btn.disabled = false;
+
+    if (!data.ok) { toast(data.msg || 'Lỗi tạo key', 'err'); return; }
+
+    /* Key được lưu server-side, client không nhận key thật */
+    $('keyLink').href        = data.link;
+    $('keyLink').textContent = data.link;
+    $('keyActivate').classList.add('show');
+    $('keyEntered').value    = '';
+    $('keyVal').textContent  = '⏳ Chờ kích hoạt…';
+    $('kToday').textContent  = data.keys_used;
+    $('kLeft').textContent   = data.keys_left;
+    toast('Mở link → sao chép key → dán vào ô bên dưới', 'info');
+  } catch (e) {
+    btn.textContent = '⚡ Tạo key mới'; btn.disabled = false;
+    toast('Không kết nối được server', 'err');
+  }
+}
+
+async function verifyKey() {
+  const entered = $('keyEntered').value.trim().toUpperCase();
+  if (!entered) { toast('Nhập key vào ô', 'warn'); return; }
+
+  try {
+    const data = await api('/api/key/verify', {
+      method: 'POST', headers: jhdr(),
+      body: JSON.stringify({ entered_key: entered })
+    });
+    if (data.ok) {
+      $('keyVal').textContent = data.key;
+      $('keyActivate').classList.remove('show');
+      $('kRem').textContent   = data.remain;
+      $('kToday').textContent = data.keys_today;
+      $('kLeft').textContent  = data.keys_left;
+      if (user) {
+        user.remain = data.remain;
+        if (data.exam_remain != null) user.exam_remain = data.exam_remain;
+        if (data.first_verified) user.first_verified = 1;
+        updateUser();
+      }
+      // Mở khóa app nếu đây là key đầu tiên
+      if (data.first_verified === 1) {
+        const gs = $('gateScreen');
+        if (gs && gs.style.display !== 'none') hideGateScreen();
+      }
+      toast(data.msg, 'ok');
+    } else {
+      toast(data.msg || 'Key không hợp lệ', 'err');
+    }
+  } catch (e) {
+    toast('Không kết nối được server', 'err');
+  }
+}
+
+function cancelKey() {
+  $('keyActivate').classList.remove('show');
+  $('keyVal').textContent = 'OLMFREE-XXXX-XXXX-XXXX';
+}
+
+
+
+// ── NOTIFICATIONS (force-read modal) ──────────────────────────────────────
+let _notifTimer = null;
+let _unreadNotifs =[];
+
+async function loadNotifications() {
+  if (!token) return;
+  try {
+    const d = await api('/api/notifications', { headers: hdr() });
+    if (!d.ok) return;
+    const unread = d.unread || 0;
+    const badge = $('notifBadge');
+    if (badge) {
+      if (unread > 0) {
+        badge.textContent = unread > 9 ? '9+' : unread;
+        badge.style.display = 'flex';
+        // Collect unread for modal
+        _unreadNotifs = (d.notifications ||[]).filter(n => !n.read);
+        // Auto-show modal if new unread arrived
+        if (unread > 0 && !$('notifModal').classList.contains('show')) {
+          showNotifModal();
+        }
+      } else {
+        badge.style.display = 'none';
+        _unreadNotifs =[];
+      }
+    }
+  } catch(e) {}
+}
+
+function showNotifModal() {
+  const iconMap = { gift: '🎁', admin: '📢', info: 'ℹ️', warn: '⚠️', canva_gift: '🎨' };
+  const list = $('notifModalList');
+  if (!list) return;
+  const notifs = _unreadNotifs.length ? _unreadNotifs :[];
+  if (!notifs.length) return;
+  list.innerHTML = notifs.map(n => `
+    <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start">
+      <span style="font-size:22px;flex-shrink:0">${iconMap[n.type]||'🔔'}</span>
+      <div style="flex:1">
+        <div style="font-size:14px;color:var(--text);line-height:1.6;font-weight:500">${n.message}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:5px;font-family:'Space Mono',monospace">${n.ts||''}</div>
+        ${n.type==='canva_gift'?`<button onclick="closeNotifModal(); navMobile('link',document.getElementById('bn-link')); nav('link',document.getElementById('dn-link')); openCanvaModal();" style="margin-top:10px;padding:8px 16px;border-radius:8px;background:linear-gradient(135deg,rgba(124,77,255,.2),rgba(0,188,212,.15));border:1px solid rgba(124,77,255,.4);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">🎨 Nhận Canva EDU ngay →</button>`:''}
+      </div>
+    </div>`).join('');
+  const countEl = $('notifModalCount');
+  if (countEl && notifs.length > 0) countEl.textContent = notifs.length + ' mới';
+  $('notifModal').classList.add('show');
+}
+
+async function closeNotifModal() {
+  $('notifModal').classList.remove('show');
+  // Mark all as read
+  try {
+    await api('/api/notifications/read', { method: 'POST', headers: jhdr(), body: '{}' });
+    const badge = $('notifBadge');
+    if (badge) badge.style.display = 'none';
+    _unreadNotifs =[];
+  } catch(e) {}
+}
+
+function toggleNotifPanel() {
+  // Now opens modal instead of dropdown
+  if (_unreadNotifs.length > 0) {
+    showNotifModal();
+  } else {
+    // Show all notifications in modal
+    _fetchAllAndShowModal();
+  }
+}
+
+async function _fetchAllAndShowModal() {
+  try {
+    const d = await api('/api/notifications', { headers: hdr() });
+    if (!d.ok || !d.notifications?.length) { toast('Không có thông báo', 'info'); return; }
+    _unreadNotifs = d.notifications.slice(0, 10);
+    showNotifModal();
+  } catch(e) {}
+}
+
+// Poll notifications every 30s
+function startNotifPoll() {
+  loadNotifications();
+  _notifTimer = setInterval(loadNotifications, 30000);
+}
+
+// ── NEW USER BONUS ─────────────────────────────────────────────────────────
+function checkNewUser(loginData) {
+  if (loginData.tier !== 'free') return;
+  if (loginData.new_user_bonus_done) return;
+  // Hiện modal chào mừng
+  $('newUserOverlay').classList.add('show');
+}
+
+async function nuGenKey() {
+  const btn = $('nuGenBtn');
+  btn.textContent = 'Đang tạo…'; btn.disabled = true;
+  try {
+    const data = await api('/api/key/start', { method: 'POST', headers: hdr() });
+    btn.textContent = '⚡ Tạo key'; btn.disabled = false;
+    if (!data.ok) { toast(data.msg || 'Lỗi tạo key', 'err'); return; }
+    $('nuKeyLink').href = data.link;
+    $('nuKeyLink').textContent = data.link;
+    $('nuActivateBox').style.display = '';
+    $('nuKeyEntered').value = '';
+    toast('Mở link → lấy key → dán vào ô bên dưới', 'info');
+  } catch(e) {
+    btn.textContent = '⚡ Tạo key'; btn.disabled = false;
+    toast('Lỗi kết nối', 'err');
+  }
+}
+
+async function nuVerifyKey() {
+  const entered = $('nuKeyEntered').value.trim().toUpperCase();
+  if (!entered) { toast('Nhập key vào ô', 'warn'); return; }
+  try {
+    const data = await api('/api/key/verify', {
+      method: 'POST', headers: jhdr(),
+      body: JSON.stringify({ entered_key: entered })
+    });
+    if (data.ok) {
+      if (user) { user.remain = data.remain; if (data.exam_remain != null) user.exam_remain = data.exam_remain; updateUser(); }
+      $('nuKeyBox').style.display = 'none';
+      $('nuSuccessBox').style.display = '';
+      toast(data.msg, 'ok');
+    } else {
+      toast(data.msg || 'Key không hợp lệ', 'err');
+    }
+  } catch(e) { toast('Lỗi kết nối', 'err'); }
+}
+
+function nuCancelKey() {
+  $('nuActivateBox').style.display = 'none';
+  $('nuGenBtn').textContent = '⚡ Tạo key';
+  $('nuGenBtn').disabled = false;
+}
+
+function nuClose() {
+  $('newUserOverlay').classList.remove('show');
+}
+
+// ── CANVA MODAL ─────────────────────────────────────────────────────────────
+let _canvaStep = 0;
+
+function openCanvaModal() {
+  _canvaStep = 1;
+  _renderCanvaStep();
+  $('canvaOverlay').classList.add('show');
+}
+
+function closeCanvaModal() {
+  $('canvaOverlay').classList.remove('show');
+}
+
+function _renderCanvaStep() {
+  // Step dots
+  const states =[_canvaStep, _canvaStep, _canvaStep, _canvaStep];['cs1','cs2','cs3','cs4'].forEach((id, i) => {
+    const el = $(id);
+    el.classList.remove('done','active');
+    if (i + 1 < _canvaStep) el.classList.add('done');
+    else if (i + 1 === _canvaStep) el.classList.add('active');
+  });['cl1','cl2','cl3'].forEach((id, i) => {
+    const el = $(id);
+    el.classList.remove('done');
+    if (i + 1 < _canvaStep) el.classList.add('done');
+  });
+  // Panels
+  $('cStep1').style.display = _canvaStep === 1 ? '' : 'none';
+  $('cStep2').style.display = _canvaStep === 2 ? '' : 'none';
+  $('cStep3').style.display = _canvaStep === 3 ? '' : 'none';
+  $('cStep4').style.display = _canvaStep === 4 ? '' : 'none';
+}
+
+async function canvaGenKey(step) {
+  const btn = $('c' + step + 'GenBtn');
+  btn.textContent = 'Đang tạo…'; btn.disabled = true;
+  try {
+    const data = await api('/api/key/start', { method: 'POST', headers: hdr() });
+    btn.textContent = '⚡ Tạo key #' + step; btn.disabled = false;
+    if (!data.ok) { toast(data.msg || 'Lỗi tạo key', 'err'); return; }
+    $('c' + step + 'KeyLink').href = data.link;
+    $('c' + step + 'KeyLink').textContent = data.link;
+    $('c' + step + 'ActivateBox').style.display = '';
+    $('c' + step + 'KeyEntered').value = '';
+    toast('Mở link → lấy key → dán vào ô bên dưới', 'info');
+  } catch(e) {
+    btn.textContent = '⚡ Tạo key #' + step; btn.disabled = false;
+    toast('Lỗi kết nối', 'err');
+  }
+}
+
+async function canvaVerifyKey(step) {
+  const entered = $('c' + step + 'KeyEntered').value.trim().toUpperCase();
+  if (!entered) { toast('Nhập key vào ô', 'warn'); return; }
+  try {
+    const data = await api('/api/key/verify', {
+      method: 'POST', headers: jhdr(),
+      body: JSON.stringify({ entered_key: entered })
+    });
+    if (data.ok) {
+      if (user) { user.remain = data.remain; if (data.exam_remain != null) user.exam_remain = data.exam_remain; updateUser(); }
+      toast('Key #' + step + ' hợp lệ ✓', 'ok');
+      _canvaStep = step + 1;
+      _renderCanvaStep();
+      // Reset activate box
+      $('c' + step + 'ActivateBox').style.display = 'none';
+    } else {
+      toast(data.msg || 'Key không hợp lệ', 'err');
+    }
+  } catch(e) { toast('Lỗi kết nối', 'err'); }
+}
+
+function canvaCancelKey(step) {
+  $('c' + step + 'ActivateBox').style.display = 'none';
+  $('c' + step + 'GenBtn').textContent = '⚡ Tạo key #' + step;
+  $('c' + step + 'GenBtn').disabled = false;
+}
+
+async function submitCanvaEmail() {
+  const email = $('canvaEmailInp').value.trim();
+  if (!email || !email.includes('@')) { toast('Nhập email hợp lệ', 'warn'); return; }
+  try {
+    const data = await api('/api/canva/request', {
+      method: 'POST', headers: jhdr(),
+      body: JSON.stringify({ email })
+    });
+    if (data.ok) {
+      _canvaStep = 4;
+      _renderCanvaStep();
+    } else {
+      toast(data.msg || 'Lỗi gửi yêu cầu', 'err');
+    }
+  } catch(e) { toast('Lỗi kết nối', 'err'); }
+}
+
+
+// ── EXAM BUY MODAL ──────────────────────────────────────────────────────────
+function showExamBuyModal() {
+  $('examBuyModal').classList.add('show');
+}
+
+// ── APPS MODAL ───────────────────────────────────────────────────────────────
+function openAppsModal() {
+  $('appsModal').classList.add('show');
+}
+
+// ── FEEDBACK ─────────────────────────────────────────────────────────────────
+let _rating = 0;
+
+function openFeedback() {
+  _rating = 0;
+  document.querySelectorAll('.rating-btn').forEach(b => b.style.opacity = '.4');
+  $('feedbackText').value = '';
+  $('feedbackModal').classList.add('show');
+}
+
+function setRating(n) {
+  _rating = n;
+  document.querySelectorAll('.rating-btn').forEach(b => {
+    b.style.opacity = parseInt(b.dataset.r) <= n ? '1' : '.3';
+    b.style.transform = parseInt(b.dataset.r) <= n ? 'scale(1.2)' : 'scale(1)';
+  });
+}
+
+async function submitFeedback() {
+  const text = $('feedbackText').value.trim();
+  if (!_rating && !text) { toast('Vui lòng chọn số sao hoặc nhập nội dung', 'warn'); return; }
+  try {
+    const d = await api('/api/feedback', {
+      method: 'POST', headers: jhdr(),
+      body: JSON.stringify({ rating: _rating, text })
+    });
+    if (d.ok) {
+      $('feedbackModal').classList.remove('show');
+      toast('Cảm ơn phản hồi của bạn! 🙏', 'ok');
+    } else {
+      toast(d.msg || 'Lỗi gửi', 'err');
+    }
+  } catch { toast('Lỗi kết nối', 'err'); }
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────────────
+function toggleLoginPass() {
+  const inp = $('lp');
+  const btn = $('eyeBtn');
+  if (!inp) return;
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁'; }
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && $('loginScreen').style.display !== 'none') doLogin();
+});
+</script>
+
+<!-- ═══ EXAM BUY MODAL ═══ -->
+<div class="overlay" id="examBuyModal" style="z-index:550">
+  <div class="modal-box" style="max-width:380px">
+    <div class="modal-hd" style="background:rgba(245,200,66,.05)">
+      <h3 style="color:var(--gold)">📝 Bài kiểm tra — Cần nâng cấp</h3>
+      <button onclick="$('examBuyModal').classList.remove('show')" style="background:none;border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;width:28px;height:28px;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div class="modal-bd" style="padding:18px">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.7">Bài kiểm tra yêu cầu quyền đặc biệt. Chọn phương án phù hợp với bạn:</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="https://zalo.me/0352470535" target="_blank" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.3);text-decoration:none" onclick="$('examBuyModal').classList.remove('show')">
+          <span style="font-size:26px">💰</span>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--gold)">Mua lẻ lượt kiểm tra</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">Trả tiền theo từng bài · Liên hệ Zalo</div>
+          </div>
+        </a>
+        <a href="https://zalo.me/0352470535" target="_blank" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;background:rgba(0,221,181,.06);border:1px solid rgba(0,221,181,.2);text-decoration:none" onclick="$('examBuyModal').classList.remove('show')">
+          <span style="font-size:26px">✦</span>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--teal)">Nâng cấp ULTRA VIP</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">Không giới hạn · Tùy chỉnh điểm · Canva EDU free</div>
+          </div>
+        </a>
+      </div>
+      <button class="btn btn-ghost btn-full" style="margin-top:14px" onclick="$('examBuyModal').classList.remove('show')">Để sau</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ALL APPS MODAL ═══ -->
+<div class="overlay" id="appsModal" style="z-index:550">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-hd" style="background:rgba(167,139,250,.05)">
+      <h3 style="color:var(--violet)">✨ Mua tài khoản App Pro</h3>
+      <button onclick="$('appsModal').classList.remove('show')" style="background:none;border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;width:28px;height:28px;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div class="modal-bd" style="padding:18px">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:16px">Liên hệ admin Zalo <strong style="color:var(--teal)">0352470535</strong> để mua tài khoản app Pro với giá tốt:</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+        <div style="padding:12px;border-radius:10px;background:var(--bg3);border:1px solid var(--border);text-align:center">
+          <div style="font-size:24px;margin-bottom:5px">🤖</div>
+          <div style="font-size:12px;font-weight:700;color:#fff">ChatGPT Plus</div>
+          <div style="font-size:10px;color:var(--text3)">GPT-4o · DALL-E</div>
+        </div>
+        <div style="padding:12px;border-radius:10px;background:var(--bg3);border:1px solid var(--border);text-align:center">
+          <div style="font-size:24px;margin-bottom:5px">🎨</div>
+          <div style="font-size:12px;font-weight:700;color:#fff">Canva Pro</div>
+          <div style="font-size:10px;color:var(--text3)">Thiết kế · Template</div>
+        </div>
+        <div style="padding:12px;border-radius:10px;background:var(--bg3);border:1px solid var(--border);text-align:center">
+          <div style="font-size:24px;margin-bottom:5px">🎬</div>
+          <div style="font-size:12px;font-weight:700;color:#fff">CapCut Pro</div>
+          <div style="font-size:10px;color:var(--text3)">Edit video · AI</div>
+        </div>
+        <div style="padding:12px;border-radius:10px;background:var(--bg3);border:1px solid var(--border);text-align:center">
+          <div style="font-size:24px;margin-bottom:5px">🦜</div>
+          <div style="font-size:12px;font-weight:700;color:#fff">Duolingo Plus</div>
+          <div style="font-size:10px;color:var(--text3)">Học ngoại ngữ</div>
+        </div>
+        <div style="padding:12px;border-radius:10px;background:var(--bg3);border:1px solid var(--border);text-align:center">
+          <div style="font-size:24px;margin-bottom:5px">🎵</div>
+          <div style="font-size:12px;font-weight:700;color:#fff">Spotify Premium</div>
+          <div style="font-size:10px;color:var(--text3)">Nghe nhạc lossless</div>
+        </div>
+        <div style="padding:12px;border-radius:10px;background:var(--bg3);border:1px solid var(--border);text-align:center">
+          <div style="font-size:24px;margin-bottom:5px">📚</div>
+          <div style="font-size:12px;font-weight:700;color:#fff">Và nhiều hơn…</div>
+          <div style="font-size:10px;color:var(--text3)">Hỏi admin nhé!</div>
+        </div>
+      </div>
+      <a href="https://zalo.me/0352470535" target="_blank" class="btn btn-full" style="background:linear-gradient(135deg,rgba(167,139,250,.15),rgba(91,192,248,.1));color:var(--violet);border-color:rgba(167,139,250,.35);text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px" onclick="$('appsModal').classList.remove('show')">
+        📞 Liên hệ Zalo · 0352470535
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FEEDBACK MODAL ═══ -->
+<div class="overlay" id="feedbackModal" style="z-index:550">
+  <div class="modal-box" style="max-width:380px">
+    <div class="modal-hd">
+      <h3>💬 Phản hồi của bạn</h3>
+      <button onclick="$('feedbackModal').classList.remove('show')" style="background:none;border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;width:28px;height:28px;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Bạn thấy tool này thế nào? Ý kiến của bạn giúp mình cải thiện nhiều hơn! 🙏</div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px" id="ratingRow">
+        <button onclick="setRating(1)" class="rating-btn" data-r="1" style="font-size:24px;background:none;border:none;cursor:pointer;opacity:.4;transition:all .15s">⭐</button>
+        <button onclick="setRating(2)" class="rating-btn" data-r="2" style="font-size:24px;background:none;border:none;cursor:pointer;opacity:.4;transition:all .15s">⭐</button>
+        <button onclick="setRating(3)" class="rating-btn" data-r="3" style="font-size:24px;background:none;border:none;cursor:pointer;opacity:.4;transition:all .15s">⭐</button>
+        <button onclick="setRating(4)" class="rating-btn" data-r="4" style="font-size:24px;background:none;border:none;cursor:pointer;opacity:.4;transition:all .15s">⭐</button>
+        <button onclick="setRating(5)" class="rating-btn" data-r="5" style="font-size:24px;background:none;border:none;cursor:pointer;opacity:.4;transition:all .15s">⭐</button>
+      </div>
+      <textarea id="feedbackText" rows="3" placeholder="Góp ý, báo lỗi, hoặc bất cứ điều gì bạn muốn nói…" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:11px 14px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;resize:none;margin-bottom:12px;transition:border-color .2s" onfocus="this.style.borderColor='var(--teal3)'" onblur="this.style.borderColor=''"></textarea>
+      <button class="btn btn-primary btn-full" onclick="submitFeedback()">📨 Gửi phản hồi</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NOTIFICATION MODAL (force-read) ═══ -->
+<div class="overlay" id="notifModal" style="z-index:600">
+  <div class="modal-box" style="max-width:400px;box-shadow:0 0 0 1px rgba(0,221,181,.2),0 20px 60px rgba(0,0,0,.7)">
+    <div class="modal-hd" style="background:rgba(0,221,181,.04)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:20px">🔔</span>
+        <h3 style="font-size:15px;font-weight:700;color:var(--text)">Thông báo từ Admin</h3>
+      </div>
+      <span id="notifModalCount" style="font-size:11px;padding:2px 8px;border-radius:20px;background:rgba(255,79,114,.15);color:var(--rose);font-family:'Space Mono',monospace;font-weight:700"></span>
+    </div>
+    <div id="notifModalList" style="max-height:360px;overflow-y:auto;-webkit-overflow-scrolling:touch"></div>
+    <div style="padding:14px 16px;border-top:1px solid var(--border)">
+      <button class="btn btn-primary btn-full" onclick="closeNotifModal()">✓ Đã đọc — Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NEW USER WELCOME MODAL ═══ -->
+<div class="overlay" id="newUserOverlay">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <h3>🎉 Chào mừng bạn mới!</h3>
+    </div>
+    <div class="modal-bd">
+      <div style="text-align:center;margin-bottom:18px">
+        <div style="font-size:36px;margin-bottom:10px">🎁</div>
+        <div style="font-size:14px;font-weight:600;color:var(--teal);margin-bottom:6px">Tặng 3 lượt làm bài miễn phí!</div>
+        <div style="font-size:12px;color:var(--text3)">Bạn cần vượt <strong style="color:var(--gold)">1 key</strong> để kích hoạt tài khoản và nhận quà.</div>
+      </div>
+
+      <div class="key-step-box" id="nuKeyBox">
+        <div class="key-step-title">⚡ Tạo & kích hoạt key</div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:10px">Nhấn nút bên dưới, mở link → lấy key → dán vào đây:</div>
+        <button class="btn btn-primary btn-full" id="nuGenBtn" onclick="nuGenKey()" style="margin-bottom:10px">⚡ Tạo key</button>
+        <div id="nuActivateBox" style="display:none">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Bước 1: Mở link này và lấy key:</div>
+          <a id="nuKeyLink" href="#" target="_blank" style="display:block;font-size:11px;color:var(--teal);word-break:break-all;margin-bottom:10px;text-decoration:underline">–</a>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Bước 2: Dán key vào đây:</div>
+          <input class="key-inp" id="nuKeyEntered" type="text" placeholder="OLMFREE-DDMM-XXXX-XXXX" style="margin-bottom:8px">
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" style="flex:1" onclick="nuVerifyKey()">✓ Kích hoạt</button>
+            <button class="btn btn-ghost btn-sm" onclick="nuCancelKey()">Huỷ</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="nuSuccessBox" style="display:none;text-align:center;padding:14px 0">
+        <div style="font-size:32px;margin-bottom:8px">✅</div>
+        <div style="font-size:14px;font-weight:600;color:var(--lime);margin-bottom:4px">Kích hoạt thành công!</div>
+        <div style="font-size:12px;color:var(--text3)">Bạn đã nhận <strong style="color:var(--teal)">3 lượt từ key</strong> + <strong style="color:var(--gold)">3 lượt tặng</strong> mới!</div>
+        <button class="btn btn-primary btn-full" style="margin-top:14px" onclick="nuClose()">🚀 Bắt đầu dùng tool</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CANVA PRO FREE MODAL ═══ -->
+<div class="overlay" id="canvaOverlay">
+  <div class="canva-modal-box">
+    <div class="modal-hd" style="background:linear-gradient(135deg,rgba(124,77,255,.08),rgba(0,188,212,.06));border-color:rgba(124,77,255,.2)">
+      <div>
+        <h3 style="color:#fff">🎨 Nhận Canva Pro miễn phí</h3>
+        <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px">Canva EDU 5 ngày · Xử lý trong 24h</div>
+      </div>
+      <button onclick="closeCanvaModal()" style="background:none;border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;width:28px;height:28px;font-size:14px">✕</button>
+    </div>
+    <div class="modal-bd">
+
+      <!-- Step indicator -->
+      <div class="step-indicator">
+        <div class="step-dot" id="cs1">1</div>
+        <div class="step-line" id="cl1"></div>
+        <div class="step-dot" id="cs2">2</div>
+        <div class="step-line" id="cl2"></div>
+        <div class="step-dot" id="cs3">3</div>
+        <div class="step-line" id="cl3"></div>
+        <div class="step-dot" id="cs4">✓</div>
+      </div>
+
+      <!-- Step 1: Key 1 -->
+      <div id="cStep1">
+        <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Xác thực bước <strong style="color:#7c4dff">1/2</strong> — tạo và vượt key đầu tiên:</div>
+        <div class="key-step-box">
+          <div class="key-step-title">⚡ Key xác thực #1</div>
+          <button class="btn btn-primary btn-full" id="c1GenBtn" onclick="canvaGenKey(1)" style="margin-bottom:10px">⚡ Tạo key #1</button>
+          <div id="c1ActivateBox" style="display:none">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Mở link và lấy key:</div>
+            <a id="c1KeyLink" href="#" target="_blank" style="display:block;font-size:11px;color:var(--teal);word-break:break-all;margin-bottom:10px;text-decoration:underline">–</a>
+            <input class="key-inp" id="c1KeyEntered" type="text" placeholder="OLMFREE-DDMM-XXXX-XXXX" style="margin-bottom:8px">
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-primary" style="flex:1" onclick="canvaVerifyKey(1)">✓ Xác nhận</button>
+              <button class="btn btn-ghost btn-sm" onclick="canvaCancelKey(1)">Huỷ</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Key 2 -->
+      <div id="cStep2" style="display:none">
+        <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Xác thực bước <strong style="color:#00bcd4">2/2</strong> — tạo và vượt key thứ hai:</div>
+        <div class="key-step-box">
+          <div class="key-step-title">⚡ Key xác thực #2</div>
+          <button class="btn btn-primary btn-full" id="c2GenBtn" onclick="canvaGenKey(2)" style="margin-bottom:10px">⚡ Tạo key #2</button>
+          <div id="c2ActivateBox" style="display:none">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Mở link và lấy key:</div>
+            <a id="c2KeyLink" href="#" target="_blank" style="display:block;font-size:11px;color:var(--teal);word-break:break-all;margin-bottom:10px;text-decoration:underline">–</a>
+            <input class="key-inp" id="c2KeyEntered" type="text" placeholder="OLMFREE-DDMM-XXXX-XXXX" style="margin-bottom:8px">
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-primary" style="flex:1" onclick="canvaVerifyKey(2)">✓ Xác nhận</button>
+              <button class="btn btn-ghost btn-sm" onclick="canvaCancelKey(2)">Huỷ</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Email -->
+      <div id="cStep3" style="display:none">
+        <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Nhập email Canva của bạn để nhận tài khoản:</div>
+        <div class="field">
+          <label>Email Canva</label>
+          <input type="email" id="canvaEmailInp" class="field" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:11px 14px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none" placeholder="yourname@gmail.com">
+          <div class="field-hint" style="margin-top:6px">Email bạn dùng để đăng nhập Canva</div>
+        </div>
+        <button class="btn btn-full" style="background:linear-gradient(135deg,rgba(124,77,255,.2),rgba(0,188,212,.15));color:#fff;border-color:rgba(124,77,255,.4);margin-top:6px" onclick="submitCanvaEmail()">📨 Gửi yêu cầu đến Admin</button>
+      </div>
+
+      <!-- Step 4: Done -->
+      <div id="cStep4" style="display:none;text-align:center;padding:10px 0">
+        <div style="font-size:40px;margin-bottom:12px">🎉</div>
+        <div style="font-size:15px;font-weight:700;color:#7c4dff;margin-bottom:8px">Đã gửi yêu cầu thành công!</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:6px">Admin đã nhận yêu cầu của bạn.</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7">Bạn sẽ nhận được <strong style="color:#00bcd4">Canva EDU 5 ngày</strong> trong tối đa <strong style="color:var(--gold)">24 giờ</strong> tới.</div>
+        <div style="margin-top:14px;font-size:11px;color:var(--text3)">Kiểm tra email hoặc liên hệ Zalo <span style="color:var(--gold)">0352470535</span> nếu chưa nhận được.</div>
+        <button class="btn btn-ghost btn-full" style="margin-top:16px" onclick="closeCanvaModal()">Đóng</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ GATE SCREEN — bắt buộc vượt key lần đầu ═══ -->
+<div id="gateScreen" style="display:none;position:fixed;inset:0;z-index:700;background:var(--bg);align-items:center;justify-content:center;padding:24px 16px">
+  <!-- Animated background -->
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(0,180,150,.09) 0%,transparent 70%);pointer-events:none"></div>
+
+  <div style="display:flex;align-items:center;justify-content:center;width:100%;min-height:100vh;padding:24px 16px">
+  <div style="width:100%;max-width:400px;position:relative">
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--teal3),#004d40);border:1px solid rgba(0,221,181,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;box-shadow:0 0 32px rgba(0,221,181,.15)">🔐</div>
+      <div style="font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px">Xác thực tài khoản</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.6">Vượt <strong style="color:var(--teal)">1 link xác thực</strong> để mở khóa OLM Master.<br>Chỉ cần làm <strong style="color:var(--gold)">1 lần duy nhất</strong>.</div>
+    </div>
+
+    <!-- Card -->
+    <div style="background:var(--panel);border:1px solid var(--border2);border-radius:18px;padding:24px;position:relative;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,.4)">
+      <div style="position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--teal),transparent)"></div>
+
+      <!-- Steps guide -->
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:var(--bg3)">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,221,181,.15);border:1px solid rgba(0,221,181,.3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--teal);flex-shrink:0">1</div>
+          <div style="font-size:13px;color:var(--text2)">Nhấn <strong style="color:#fff">Tạo link xác thực</strong></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:var(--bg3)">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,221,181,.15);border:1px solid rgba(0,221,181,.3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--teal);flex-shrink:0">2</div>
+          <div style="font-size:13px;color:var(--text2)">Mở link → hoàn thành xác thực → lấy key</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:var(--bg3)">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,221,181,.15);border:1px solid rgba(0,221,181,.3);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--teal);flex-shrink:0">3</div>
+          <div style="font-size:13px;color:var(--text2)">Dán key vào ô bên dưới → <strong style="color:#fff">Xác nhận</strong></div>
+        </div>
+      </div>
+
+      <!-- Gen key button -->
+      <button class="btn btn-primary btn-full" id="gateGenBtn" onclick="gateGenKey()" style="margin-bottom:12px;font-size:15px;padding:14px;font-weight:700">
+        ⚡ Tạo link xác thực
+      </button>
+
+      <!-- Activate box (hidden until link generated) -->
+      <div id="gateActivateBox" style="display:none">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:6px">Mở link bên dưới và lấy key:</div>
+        <a id="gateLinkEl" href="#" target="_blank" style="display:block;font-size:11px;color:var(--teal);word-break:break-all;margin-bottom:12px;text-decoration:underline;padding:8px 10px;background:rgba(0,221,181,.06);border-radius:7px;border:1px solid rgba(0,221,181,.15)">–</a>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:6px">Dán key vào đây:</div>
+        <input class="key-inp" id="gateKeyInp" type="text" placeholder="OLMFREE-DDMM-XXXX-XXXX" style="margin-bottom:10px">
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" style="flex:1;font-weight:700" onclick="gateVerifyKey()">✓ Xác nhận mở khóa</button>
+          <button class="btn btn-ghost btn-sm" onclick="gateCancelKey()">Huỷ</button>
+        </div>
+      </div>
+
+      <!-- Success (hidden) -->
+      <div id="gateSuccessBox" style="display:none;text-align:center;padding:16px 0">
+        <div style="font-size:40px;margin-bottom:10px">🎉</div>
+        <div style="font-size:15px;font-weight:700;color:var(--lime);margin-bottom:6px">Xác thực thành công!</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Bạn được tặng thêm <strong style="color:var(--gold)">3 lượt</strong> — chào mừng đến OLM Master!</div>
+        <button class="btn btn-primary btn-full" onclick="hideGateScreen()">🚀 Vào tool ngay</button>
+      </div>
+    </div>
+
+    <!-- Logout option -->
+    <div style="text-align:center;margin-top:16px">
+      <button onclick="doLogout()" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif">Đăng xuất</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── GATE SCREEN ──────────────────────────────────────────────────────────────
+function showGateScreen() {
+  const gs = $('gateScreen');
+  if (gs) { gs.style.display = 'flex'; }
+  toast('⚠️ Vui lòng xác thực tài khoản trước khi dùng tool', 'warn');
+}
+
+function hideGateScreen() {
+  const gs = $('gateScreen');
+  if (gs) gs.style.display = 'none';
+  toast('🎉 Đã mở khóa — chào mừng!', 'ok');
+  loadKeyStatus();
+  updateUser();
+}
+
+async function gateGenKey() {
+  const btn = $('gateGenBtn');
+  btn.textContent = '⏳ Đang tạo…'; btn.disabled = true;
+  try {
+    const data = await api('/api/key/start', { method: 'POST', headers: hdr() });
+    btn.textContent = '⚡ Tạo link xác thực'; btn.disabled = false;
+    if (!data.ok) { toast(data.msg || 'Lỗi tạo link', 'err'); return; }
+    $('gateLinkEl').href = data.link;
+    $('gateLinkEl').textContent = data.link;
+    $('gateActivateBox').style.display = '';
+    $('gateKeyInp').value = '';
+    toast('Mở link → lấy key → dán vào ô bên dưới', 'info');
+  } catch {
+    btn.textContent = '⚡ Tạo link xác thực'; btn.disabled = false;
+    toast('Lỗi kết nối', 'err');
+  }
+}
+
+async function gateVerifyKey() {
+  const entered = ($('gateKeyInp')?.value || '').trim().toUpperCase();
+  if (!entered) { toast('Nhập key vào ô', 'warn'); return; }
+  try {
+    const data = await api('/api/key/verify', {
+      method: 'POST', headers: jhdr(),
+      body: JSON.stringify({ entered_key: entered })
+    });
+    if (data.ok) {
+      if (user) {
+        user.remain = data.remain;
+        if (data.exam_remain != null) user.exam_remain = data.exam_remain;
+        if (data.first_verified) user.first_verified = 1;
+      }
+      $('gateActivateBox').style.display = 'none';
+      $('gateGenBtn').style.display = 'none';
+      $('gateSuccessBox').style.display = '';
+    } else {
+      toast(data.msg || 'Key không hợp lệ — thử lại', 'err');
+    }
+  } catch { toast('Lỗi kết nối', 'err'); }
+}
+
+function gateCancelKey() {
+  $('gateActivateBox').style.display = 'none';
+  $('gateGenBtn').textContent = '⚡ Tạo link xác thực';
+  $('gateGenBtn').disabled = false;
+}
+</script>
+
+<!-- ═══ CANVA GIFT ACCEPT MODAL ═══ -->
+<div class="overlay" id="canvaGiftModal" style="z-index:600">
+  <div class="canva-modal-box">
+    <div class="modal-hd" style="background:linear-gradient(135deg,rgba(124,77,255,.1),rgba(0,188,212,.08));border-color:rgba(124,77,255,.3)">
+      <div>
+        <h3 style="color:#fff">🎨 Nhận Canva EDU miễn phí</h3>
+        <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px">Admin tặng bạn 5 ngày Canva EDU</div>
+      </div>
+      <button onclick="$('canvaGiftModal').classList.remove('show')" style="background:none;border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;width:28px;height:28px;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div class="modal-bd" style="padding:20px">
+      <div style="text-align:center;margin-bottom:18px">
+        <div style="font-size:40px;margin-bottom:8px">🎨</div>
+        <div style="font-size:14px;color:var(--text2);line-height:1.7">Nhập email Canva của bạn để admin gửi quyền truy cập EDU 5 ngày.</div>
+      </div>
+      <div class="field" style="margin-bottom:14px">
+        <label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:7px;font-weight:600">Email Canva của bạn</label>
+        <input type="email" id="canvaGiftEmailInp" placeholder="yourname@gmail.com" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:12px 15px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none">
+      </div>
+      <div id="canvaGiftMsg" style="font-size:12px;color:var(--text3);min-height:16px;margin-bottom:12px"></div>
+      <button class="btn btn-full" style="background:linear-gradient(135deg,rgba(124,77,255,.2),rgba(0,188,212,.15));color:#fff;border-color:rgba(124,77,255,.4);font-weight:700" onclick="submitCanvaGiftEmail()">📨 Gửi email nhận quà</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CANVA GIFT ACCEPT ───────────────────────────────────────────────────────
+function openCanvaGiftAccept() {
+  $('canvaGiftModal').classList.add('show');
+  $('canvaGiftMsg').textContent = '';
+  $('canvaGiftEmailInp').value = '';
+}
+
+async function submitCanvaGiftEmail() {
+  const email = ($('canvaGiftEmailInp')?.value || '').trim();
+  if (!email || !email.includes('@')) { toast('Nhập email hợp lệ', 'warn'); return; }
+  const msgEl = $('canvaGiftMsg');
+  try {
+    const d = await api('/api/canva/accept-gift', {
+      method: 'POST', headers: jhdr(),
+      body: JSON.stringify({ email })
+    });
+    if (d.ok) {
+      if (msgEl) { msgEl.textContent = '✓ ' + d.msg; msgEl.style.color = 'var(--lime)'; }
+      setTimeout(() => $('canvaGiftModal').classList.remove('show'), 2500);
+      toast(d.msg, 'ok');
+    } else {
+      if (msgEl) { msgEl.textContent = '✗ ' + d.msg; msgEl.style.color = 'var(--rose)'; }
+    }
+  } catch { toast('Lỗi kết nối', 'err'); }
+}
+</script>
+</body>
+</html>
