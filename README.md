@@ -94,7 +94,7 @@
             { t: 12.5, txt: "CÂU CHÂN THẬT" },
             { t: 14.5, txt: "Giá như tôi một lần" },
             { t: 16.0, txt: "TIN EM..." },
-            { t: 17.7, txt: "Cô tôi thương" },
+            { t: 17.7, txt: "Cô gái tôi thương" },
             { t: 19.7, txt: "nay hoà vào mây gió" },
             { t: 22.5, txt: "Để lại tháng tư..." },
             { t: 24.0, txt: "Ở ĐÓ!" }
