@@ -1,14 +1,13 @@
-/* --- BIẾN MÀU SẮC ĐẠI DƯƠNG CAO CẤP --- */
 :root {
-    --bg-main: #040912;
-    --bg-sidebar: #081220;
-    --bg-card: #0c1a2d;
-    --accent-cyan: #00f0ff;
-    --accent-blue: #0072ff;
-    --text-main: #e2f1ff;
-    --text-muted: #627d98;
-    --success: #00ff87;
-    --border-color: rgba(0, 240, 255, 0.08);
+    --bg-deep: #030812;
+    --bg-side: #07101e;
+    --bg-surface: #0b1626;
+    --neon-cyan: #00f0ff;
+    --neon-blue: #0066ff;
+    --text-white: #e5f2ff;
+    --text-darker: #5f7894;
+    --border-line: rgba(0, 240, 255, 0.09);
+    --error-color: #ff3b3b;
 }
 
 * {
@@ -20,8 +19,8 @@
 }
 
 body {
-    background-color: var(--bg-main);
-    color: var(--text-main);
+    background-color: var(--bg-deep);
+    color: var(--text-white);
     overflow: hidden;
     height: 100vh;
     display: flex;
@@ -29,74 +28,59 @@ body {
     align-items: center;
 }
 
-/* CONTAINER CHÍNH */
+/* KHUNG CONTAINER CHÍNH */
 .client-container {
-    width: 1150px;
-    height: 720px;
-    background: radial-gradient(circle at top left, #0b1d36, var(--bg-main));
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    border-radius: 16px;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 50px rgba(0, 114, 255, 0.1);
+    width: 1160px;
+    height: 730px;
+    background: radial-gradient(circle at top left, #0a1b32, var(--bg-deep));
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 14px;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7);
     display: flex;
-    overflow: hidden;
     position: relative;
+    overflow: hidden;
 }
 
-/* SIDEBAR VÀ HOẠT ẢNH TẮT TAB MƯỢT MÀ */
+/* SIDEBAR KHÔNG CÓ ANIMATION DELAY KHI COLLAPSE */
 .sidebar {
-    width: 260px;
-    background-color: var(--bg-sidebar);
-    border-right: 1px solid var(--border-color);
+    width: 250px;
+    background-color: var(--bg-side);
+    border-right: 1px solid var(--border-line);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 30px 20px;
-    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-    opacity: 1;
-    visibility: visible;
-    overflow: hidden;
+    padding: 35px 20px;
     flex-shrink: 0;
-}
-
-/* Class kích hoạt khi bấm vào tab Client để biến mất */
-.sidebar.collapsed {
-    width: 0;
-    padding-left: 0;
-    padding-right: 0;
-    opacity: 0;
-    visibility: hidden;
-    border-right: none;
 }
 
 .brand {
     display: flex;
     align-items: center;
     gap: 12px;
-    white-space: nowrap;
+    margin-bottom: 50px;
 }
 
 .logo-icon {
-    width: 30px;
-    height: 30px;
-    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-    border-radius: 8px;
-    box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue));
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
 }
 
 .brand h2 {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 .brand h2 span {
-    color: var(--accent-cyan);
+    color: var(--neon-cyan);
 }
 
 .menu {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-top: -100px;
+    gap: 8px;
 }
 
 .menu-item {
@@ -104,235 +88,275 @@ body {
     align-items: center;
     gap: 14px;
     padding: 12px 16px;
-    color: var(--text-muted);
+    color: var(--text-darker);
     text-decoration: none;
     font-size: 14px;
     font-weight: 500;
     border-radius: 8px;
-    white-space: nowrap;
-    transition: all 0.3s ease;
 }
 
 .menu-item:hover, .menu-item.active {
-    color: var(--text-main);
-    background-color: rgba(0, 114, 255, 0.12);
+    color: var(--text-white);
+    background-color: rgba(0, 102, 255, 0.15);
 }
 
 .menu-item.active {
-    border-left: 3px solid var(--accent-cyan);
+    border-left: 3px solid var(--neon-cyan);
     background: linear-gradient(90deg, rgba(0, 240, 255, 0.08), transparent);
     padding-left: 13px;
 }
 
-/* User Profile chứa thông tin tài khoản bạn yêu cầu */
-.user-profile {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding-top: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.04);
-    white-space: nowrap;
-}
-
-.avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: #102a45;
-    border: 2px solid var(--accent-blue);
-}
-
-.user-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.username {
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.rank {
-    font-size: 11px;
-    color: var(--accent-cyan);
-}
-
-/* --- VÙNG NỘI DUNG CHÍNH (TỰ ĐỘNG GIÃN TOÀN MÀN HÌNH) --- */
+/* NỘI DUNG CHÍNH CHUYỂN ĐỔI TOÀN MÀN HÌNH LẬP TỨC */
 .main-content {
     flex: 1;
-    padding: 35px;
+    padding: 40px;
     overflow-y: auto;
     position: relative;
-    background-color: transparent;
 }
 
-/* Nút ẩn/hiện menu phụ trợ */
+/* Khi kích hoạt chế độ toàn màn hình cho tab Client */
+.main-content.fullscreen {
+    padding-top: 80px; /* Chừa khoảng trống cho nút quay lại */
+}
+
+/* NÚT QUAY LẠI PHÁT HUY LẬP TỨC */
 .toggle-menu-btn {
     position: absolute;
     top: 30px;
-    left: 35px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    color: var(--accent-cyan);
-    padding: 8px;
+    left: 40px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-line);
+    color: var(--neon-cyan);
+    padding: 10px 16px;
     border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
     cursor: pointer;
-    display: none;
-    transition: opacity 0.3s ease;
+    display: none; /* Ẩn mặc định */
+    align-items: center;
+    gap: 8px;
 }
 
-.toggle-menu-btn.visible {
-    display: block;
+.toggle-menu-btn:hover {
+    background: rgba(0, 240, 255, 0.05);
 }
 
-/* LOGIC HIỂN THỊ TỪNG CỬA SỔ TAB */
+/* LOGIC HIỂN THỊ CÁC TAB */
 .tab-panel {
     display: none;
-    animation: fadeIn 0.4s ease forwards;
 }
-
 .tab-panel.active {
     display: block;
 }
 
-/* Nếu ẩn sidebar, đẩy lùi tiêu đề của tab Client tránh đè nút quay lại */
-.sidebar.collapsed + .main-content .tab-panel.active .content-header {
-    padding-left: 50px;
-}
-
 .content-header {
-    margin-bottom: 30px;
-    transition: padding 0.3s ease;
+    margin-bottom: 35px;
 }
 
 .content-header h2 {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 600;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .content-header p {
     font-size: 13px;
-    color: var(--text-muted);
+    color: var(--text-darker);
 }
 
-/* CẤU TRÚC DANH SÁCH FILE CLIENT ĐÃ ĐĂNG */
+/* TRẠNG THÁI TRỐNG (EMPTY STATE CHUẨN) */
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    border: 1px dashed rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    background: rgba(11, 22, 38, 0.2);
+}
+
+.empty-icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+    opacity: 0.6;
+}
+
+.empty-state h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.empty-state p {
+    font-size: 12px;
+    color: var(--text-darker);
+}
+
+/* GRID HIỂN THỊ FILE KHI TẢI LÊN THÀNH CÔNG */
 .mod-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
 }
 
-.mod-card {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 20px;
+.file-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-line);
+    border-radius: 10px;
+    padding: 18px;
     display: flex;
     align-items: center;
     gap: 15px;
-    transition: transform 0.3s ease, border-color 0.3s ease;
 }
 
-.mod-card:hover {
-    transform: translateY(-2px);
-    border-color: rgba(0, 240, 255, 0.25);
+.file-icon {
+    font-size: 22px;
+    background: rgba(0, 102, 255, 0.15);
+    padding: 8px;
+    border-radius: 8px;
 }
 
-.file-icon-wrapper {
-    font-size: 24px;
-    background: rgba(0, 114, 255, 0.1);
-    padding: 10px;
-    border-radius: 10px;
-}
-
-.mod-info {
+.file-details {
     flex: 1;
 }
 
-.mod-info h3 {
-    font-size: 15px;
+.file-details h3 {
+    font-size: 14px;
     font-weight: 600;
-    margin-bottom: 4px;
+    color: var(--text-white);
+    word-break: break-all;
 }
 
-.mod-info p {
-    font-size: 12px;
-    color: var(--text-muted);
-}
-
-.status-tag {
+.file-details p {
     font-size: 11px;
+    color: var(--text-darker);
+    margin-top: 3px;
+}
+
+.active-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: #00ff87;
+    background: rgba(0, 255, 135, 0.08);
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+
+/* ================= GUI ĐĂNG NHẬP PHẦN TẢI LÊN ================= */
+.auth-box {
+    max-width: 400px;
+    margin: 40px auto 0 auto;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-line);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.lock-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.auth-header h3 {
+    font-size: 16px;
     font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 20px;
 }
 
-.status-tag.active {
-    background-color: rgba(0, 255, 135, 0.1);
-    color: var(--success);
+.auth-header p {
+    font-size: 12px;
+    color: var(--text-darker);
+    margin-top: 4px;
 }
 
-.status-tag.ready {
-    background-color: rgba(0, 240, 255, 0.1);
-    color: var(--accent-cyan);
-}
-
-/* GIAO DIỆN KHU VỰC ĐĂNG FILE CHUYÊN NGHIỆP */
-.upload-container {
-    width: 100%;
+.input-group {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-top: 10px;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
 }
 
-.upload-drag-zone {
+.input-group label {
+    font-size: 12px;
+    color: var(--text-darker);
+    font-weight: 500;
+}
+
+.input-group input {
+    background-color: var(--bg-deep);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 12px;
+    color: var(--text-white);
+    font-size: 13px;
+    outline: none;
+}
+
+.input-group input:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+}
+
+.error-text {
+    color: var(--error-color);
+    font-size: 12px;
+    margin-bottom: 16px;
+    display: none; /* Ẩn mặc định */
+    font-weight: 500;
+}
+
+.login-btn {
     width: 100%;
-    max-width: 650px;
-    border: 2px dashed var(--border-color);
-    border-radius: 16px;
+    background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan));
+    color: #ffffff;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* KHU VỰC KÉO THẢ SAU KHI ĐĂNG NHẬP */
+.upload-drag-zone {
+    border: 2px dashed var(--border-line);
+    border-radius: 14px;
     padding: 60px 20px;
     text-align: center;
-    background: rgba(12, 26, 45, 0.4);
-    transition: all 0.3s ease;
+    background: rgba(11, 22, 38, 0.3);
 }
 
 .upload-icon {
+    font-size: 45px;
     margin-bottom: 15px;
 }
 
 .upload-drag-zone h3 {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
-    margin-bottom: 6px;
 }
 
 .upload-drag-zone p {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-bottom: 20px;
+    font-size: 12px;
+    color: var(--text-darker);
+    margin: 6px 0 20px 0;
 }
 
 .select-file-btn {
-    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-    color: #ffffff;
-    border: none;
-    padding: 12px 24px;
-    font-size: 13px;
+    background-color: var(--bg-surface);
+    color: var(--neon-cyan);
+    border: 1px solid var(--neon-cyan);
+    padding: 10px 20px;
+    font-size: 12px;
     font-weight: 600;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 240, 255, 0.2);
-    transition: transform 0.2s ease;
+    transition: background 0.2s;
 }
 
 .select-file-btn:hover {
-    transform: scale(1.03);
-}
-
-/* ANIMATION HIỆN KHUNG */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
+    background-color: rgba(0, 240, 255, 0.08);
 }
