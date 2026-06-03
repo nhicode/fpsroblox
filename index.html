@@ -3,128 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aqua ModClient - NextGen Dashboard</title>
+    <title>Aqua ModClient - Management</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="client-container">
-        <aside class="sidebar">
+    <div class="client-container" id="appContainer">
+        
+        <aside class="sidebar" id="sidebar">
             <div class="brand">
                 <div class="logo-icon"></div>
                 <h2>AQUA<span>CLIENT</span></h2>
             </div>
             
             <nav class="menu">
-                <a href="#" class="menu-item active">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                    Tổng quan
-                </a>
-                <a href="#" class="menu-item">
+                <a href="#" class="menu-item active" id="menu-client">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-                    Visuals (Hiển thị)
+                    Client
                 </a>
-                <a href="#" class="menu-item">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="22" y1="12" x2="18" y2="12"></line><line x1="6" y1="12" x2="2" y2="12"></line><line x1="12" y1="6" x2="12" y2="2"></line><line x1="12" y1="22" x2="12" y2="18"></line></svg>
-                    Combat (Chiến đấu)
-                </a>
-                <a href="#" class="menu-item">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                    Cấu hình hệ thống
+                <a href="#" class="menu-item" id="menu-upload">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Đăng file
                 </a>
             </nav>
 
             <div class="user-profile">
                 <div class="avatar"></div>
                 <div class="user-info">
-                    <span class="username">Developer_Aqua</span>
-                    <span class="rank">Premium User</span>
+                    <span class="username">ngocnhi123</span>
+                    <span class="rank">mk: 123456@</span>
                 </div>
             </div>
         </aside>
 
         <main class="main-content">
-            <header class="top-header">
-                <div class="status-group">
-                    <div class="status-card">
-                        <span class="label">Trạng thái Client:</span>
-                        <span class="value safe">An toàn (Undetected)</span>
-                    </div>
-                    <div class="status-card">
-                        <span class="label">Phiên bản:</span>
-                        <span class="value version">v2.4.1-Beta</span>
-                    </div>
-                </div>
-            </header>
+            
+            <button class="toggle-menu-btn" id="toggleMenuBtn" title="Mở menu">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
 
-            <section class="mod-grid">
-                
-                <div class="mod-card">
-                    <div class="mod-info">
-                        <h3>Bypass Anti-Cheat</h3>
-                        <p>Vượt tường lửa bảo mật của hệ thống trò chơi tự động.</p>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" checked>
-                        <span class="slider"></span>
-                    </label>
+            <div id="tab-client-content" class="tab-panel active">
+                <div class="content-header">
+                    <h2>Danh Sách Client Đã Đăng</h2>
+                    <p>Quản lý và thực thi các tệp tin cấu hình hệ thống của bạn.</p>
                 </div>
 
-                <div class="mod-card mechanical">
-                    <div class="mod-header-inline">
+                <div class="mod-grid">
+                    <div class="mod-card">
+                        <div class="file-icon-wrapper">📁</div>
                         <div class="mod-info">
-                            <h3>Tăng tốc FPS (Optimization)</h3>
-                            <p>Tối ưu hóa bộ nhớ đệm và giảm răng cưa mô hình.</p>
+                            <h3>Bypass_AntiCheat_V3.lua</h3>
+                            <p>Kích thước: 2.4 MB • Ngày đăng: Vừa xong</p>
                         </div>
-                        <label class="switch">
-                            <input type="checkbox" checked>
-                            <span class="slider"></span>
-                        </label>
+                        <span class="status-tag active">Đang chạy</span>
                     </div>
-                    <div class="mod-control-range">
-                        <div class="range-labels">
-                            <span>Giới hạn FPS</span>
-                            <span class="range-value">144 Hz</span>
-                        </div>
-                        <input type="range" min="60" max="360" value="144" class="custom-range">
-                    </div>
-                </div>
-
-                <div class="mod-card">
-                    <div class="mod-info">
-                        <h3>Wallhack / ESP Box</h3>
-                        <p>Hiển thị khung xương và hộp bao quanh thực thể qua tường.</p>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
-                <div class="mod-card mechanical">
-                    <div class="mod-header-inline">
+                    <div class="mod-card">
+                        <div class="file-icon-wrapper">📁</div>
                         <div class="mod-info">
-                            <h3>Aimbot mượt (Smooth Aim)</h3>
-                            <p>Tự động hướng tâm ngắm vào mục tiêu gần nhất.</p>
+                            <h3>Optimize_FPS_Booster.ipa</h3>
+                            <p>Kích thước: 45.1 MB • Ngày đăng: Hôm qua</p>
                         </div>
-                        <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <div class="mod-control-range">
-                        <div class="range-labels">
-                            <span>Độ mượt (Smoothness)</span>
-                            <span class="range-value">4.5s</span>
-                        </div>
-                        <input type="range" min="1" max="10" step="0.5" value="4.5" class="custom-range">
+                        <span class="status-tag ready">Sẵn sàng</span>
                     </div>
                 </div>
+            </div>
 
-            </section>
+            <div id="tab-upload-content" class="tab-panel">
+                <div class="content-header">
+                    <h2>Tải Lên Tệp Tin Mới</h2>
+                    <p>Hỗ trợ các định dạng mã nguồn script, tệp tin mod hình ảnh và thực thi.</p>
+                </div>
+
+                <div class="upload-container">
+                    <div class="upload-drag-zone" id="dropZone">
+                        <div class="upload-icon">
+                            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="var(--accent-cyan)" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        </div>
+                        <h3>Kéo & Thả tệp tin vào đây</h3>
+                        <p>hoặc sao chép đường dẫn tải lên trực tiếp</p>
+                        <button class="select-file-btn" onclick="document.getElementById('fileInputElement').click()">Chọn tệp từ máy</button>
+                        <input type="file" id="fileInputElement" style="display: none;">
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
+    <script>
+        const menuClient = document.getElementById('menu-client');
+        const menuUpload = document.getElementById('menu-upload');
+        const sidebar = document.getElementById('sidebar');
+        const toggleMenuBtn = document.getElementById('toggleMenuBtn');
+        
+        const tabClientContent = document.getElementById('tab-client-content');
+        const tabUploadContent = document.getElementById('tab-upload-content');
+
+        // Khi bấm vào Menu Client: Ẩn sidebar bên cạnh, mở rộng toàn màn hình
+        menuClient.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchTab('client');
+            sidebar.classList.add('collapsed'); // Tắt tab bên cạnh đi
+            toggleMenuBtn.classList.add('visible'); // Hiện nút mở lại menu dự phòng
+        });
+
+        // Khi bấm vào Menu Đăng File: Giữ nguyên sidebar thông thường
+        menuUpload.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchTab('upload');
+        });
+
+        // Nút bấm dự phòng để bật lại sidebar nếu đang ẩn toàn màn hình
+        toggleMenuBtn.addEventListener('click', () => {
+            sidebar.classList.remove('collapsed');
+            toggleMenuBtn.classList.remove('visible');
+        });
+
+        // Hàm xử lý chuyển đổi qua lại giữa các tab nội dung mượt mà
+        function switchTab(tabName) {
+            if(tabName === 'client') {
+                menuClient.classList.add('active');
+                menuUpload.classList.remove('active');
+                tabClientContent.classList.add('active');
+                tabUploadContent.classList.remove('active');
+            } else {
+                menuClient.classList.remove('active');
+                menuUpload.classList.add('active');
+                tabClientContent.classList.remove('active');
+                tabUploadContent.classList.add('active');
+            }
+        }
+
+        // Hiệu ứng kéo thả file cơ bản trực quan
+        const dropZone = document.getElementById('dropZone');
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.style.borderColor = 'var(--accent-cyan)';
+                dropZone.style.background = 'rgba(0, 240, 255, 0.05)';
+            }, false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.style.borderColor = 'var(--border-color)';
+                dropZone.style.background = 'transparent';
+            }, false);
+        });
+    </script>
 </body>
 </html>
