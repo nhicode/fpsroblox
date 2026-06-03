@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aqua ModClient - Management</title>
+    <title>Aqua ModClient Pro</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="client-container" id="appContainer">
+    <div class="client-container">
         
         <aside class="sidebar" id="sidebar">
             <div class="brand">
@@ -27,65 +27,64 @@
                     Đăng file
                 </a>
             </nav>
+            </aside>
 
-            <div class="user-profile">
-                <div class="avatar"></div>
-                <div class="user-info">
-                    <span class="username">ngocnhi123</span>
-                    <span class="rank">mk: 123456@</span>
-                </div>
-            </div>
-        </aside>
-
-        <main class="main-content">
+        <main class="main-content" id="mainContent">
             
-            <button class="toggle-menu-btn" id="toggleMenuBtn" title="Mở menu">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            <button class="toggle-menu-btn" id="toggleMenuBtn" title="Mở lại Menu">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Quay lại Menu
             </button>
 
             <div id="tab-client-content" class="tab-panel active">
                 <div class="content-header">
                     <h2>Danh Sách Client Đã Đăng</h2>
-                    <p>Quản lý và thực thi các tệp tin cấu hình hệ thống của bạn.</p>
+                    <p>Các tệp tin cấu hình hiện tại của bạn trên hệ thống.</p>
                 </div>
 
-                <div class="mod-grid">
-                    <div class="mod-card">
-                        <div class="file-icon-wrapper">📁</div>
-                        <div class="mod-info">
-                            <h3>Bypass_AntiCheat_V3.lua</h3>
-                            <p>Kích thước: 2.4 MB • Ngày đăng: Vừa xong</p>
-                        </div>
-                        <span class="status-tag active">Đang chạy</span>
-                    </div>
-                    <div class="mod-card">
-                        <div class="file-icon-wrapper">📁</div>
-                        <div class="mod-info">
-                            <h3>Optimize_FPS_Booster.ipa</h3>
-                            <p>Kích thước: 45.1 MB • Ngày đăng: Hôm qua</p>
-                        </div>
-                        <span class="status-tag ready">Sẵn sàng</span>
-                    </div>
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-icon">📂</div>
+                    <h3>Chưa có dữ liệu client nào</h3>
+                    <p>Vui lòng chuyển sang tab "Đăng file" để tải lên tệp tin đầu tiên của bạn.</p>
                 </div>
+
+                <div class="mod-grid" id="fileGrid" style="display: none;"></div>
             </div>
 
             <div id="tab-upload-content" class="tab-panel">
-                <div class="content-header">
-                    <h2>Tải Lên Tệp Tin Mới</h2>
-                    <p>Hỗ trợ các định dạng mã nguồn script, tệp tin mod hình ảnh và thực thi.</p>
+                
+                <div class="auth-box" id="authBox">
+                    <div class="auth-header">
+                        <div class="lock-icon">🔒</div>
+                        <h3>Xác Thực Quyền Quyền Hạn</h3>
+                        <p>Nhập tài khoản quản trị viên để mở khóa tính năng tải tệp.</p>
+                    </div>
+                    <div class="input-group">
+                        <label>Tài khoản</label>
+                        <input type="text" id="usernameInput" placeholder="Nhập tk...">
+                    </div>
+                    <div class="input-group">
+                        <label>Mật khẩu</label>
+                        <input type="password" id="passwordInput" placeholder="Nhập mk...">
+                    </div>
+                    <div class="error-text" id="errorText">Tài khoản hoặc mật khẩu không chính xác!</div>
+                    <button class="login-btn" id="loginBtn">Xác Nhận Đăng Nhập</button>
                 </div>
 
-                <div class="upload-container">
+                <div class="upload-wrapper" id="uploadWrapper" style="display: none;">
+                    <div class="content-header">
+                        <h2>Tải Lên Tệp Tin Mới</h2>
+                        <p>Hệ thống hỗ trợ tải lên các tệp tin thực thi (.lua, .ipa, .zip).</p>
+                    </div>
                     <div class="upload-drag-zone" id="dropZone">
-                        <div class="upload-icon">
-                            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="var(--accent-cyan)" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                        </div>
-                        <h3>Kéo & Thả tệp tin vào đây</h3>
-                        <p>hoặc sao chép đường dẫn tải lên trực tiếp</p>
-                        <button class="select-file-btn" onclick="document.getElementById('fileInputElement').click()">Chọn tệp từ máy</button>
-                        <input type="file" id="fileInputElement" style="display: none;">
+                        <div class="upload-icon">📬</div>
+                        <h3>Kéo & Thả tệp tin của bạn vào đây</h3>
+                        <p>Dung lượng tối đa giới hạn: 100MB</p>
+                        <button class="select-file-btn" onclick="document.getElementById('fileInput').click()">Chọn File Từ Máy</button>
+                        <input type="file" id="fileInput" style="display: none;">
                     </div>
                 </div>
+
             </div>
 
         </main>
@@ -95,62 +94,116 @@
         const menuClient = document.getElementById('menu-client');
         const menuUpload = document.getElementById('menu-upload');
         const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
         const toggleMenuBtn = document.getElementById('toggleMenuBtn');
         
-        const tabClientContent = document.getElementById('tab-client-content');
-        const tabUploadContent = document.getElementById('tab-upload-content');
+        const tabClient = document.getElementById('tab-client-content');
+        const tabUpload = document.getElementById('tab-upload-content');
 
-        // Khi bấm vào Menu Client: Ẩn sidebar bên cạnh, mở rộng toàn màn hình
+        // MẢNG LƯU TRỮ FILE ĐỘNG THỰC TẾ
+        let uploadedFiles = [];
+
+        /* ================= QUẢN LÝ TAB & MENU KHÔNG DELAY ================= */
         menuClient.addEventListener('click', (e) => {
             e.preventDefault();
-            switchTab('client');
-            sidebar.classList.add('collapsed'); // Tắt tab bên cạnh đi
-            toggleMenuBtn.classList.add('visible'); // Hiện nút mở lại menu dự phòng
+            // Chuyển tab lập tức
+            tabClient.classList.add('active');
+            tabUpload.classList.remove('active');
+            menuClient.classList.add('active');
+            menuUpload.classList.remove('active');
+            
+            // Tắt sidebar và mở rộng toàn màn hình ngay tức khắc (Không dùng transition delay)
+            sidebar.style.display = 'none';
+            mainContent.classList.add('fullscreen');
+            toggleMenuBtn.style.display = 'flex';
         });
 
-        // Khi bấm vào Menu Đăng File: Giữ nguyên sidebar thông thường
         menuUpload.addEventListener('click', (e) => {
             e.preventDefault();
-            switchTab('upload');
+            // Chuyển tab lập tức, giữ nguyên sidebar
+            tabClient.classList.remove('active');
+            tabUpload.classList.add('active');
+            menuClient.classList.remove('active');
+            menuUpload.classList.add('active');
         });
 
-        // Nút bấm dự phòng để bật lại sidebar nếu đang ẩn toàn màn hình
+        // Nút quay lại: Khôi phục giao diện chuẩn ngay lập tức
         toggleMenuBtn.addEventListener('click', () => {
-            sidebar.classList.remove('collapsed');
-            toggleMenuBtn.classList.remove('visible');
+            sidebar.style.display = 'flex';
+            mainContent.classList.remove('fullscreen');
+            toggleMenuBtn.style.display = 'none';
         });
 
-        // Hàm xử lý chuyển đổi qua lại giữa các tab nội dung mượt mà
-        function switchTab(tabName) {
-            if(tabName === 'client') {
-                menuClient.classList.add('active');
-                menuUpload.classList.remove('active');
-                tabClientContent.classList.add('active');
-                tabUploadContent.classList.remove('active');
+        /* ================= THỰC THI GUI ĐĂNG NHẬP ================= */
+        const loginBtn = document.getElementById('loginBtn');
+        const usernameInput = document.getElementById('usernameInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const errorText = document.getElementById('errorText');
+        const authBox = document.getElementById('authBox');
+        const uploadWrapper = document.getElementById('uploadWrapper');
+
+        loginBtn.addEventListener('click', () => {
+            const user = usernameInput.value.trim();
+            const pass = passwordInput.value.trim();
+
+            // Check chuẩn tài khoản mật khẩu yêu cầu
+            if (user === 'ngocnhi123' && pass === '123456@') {
+                errorText.style.display = 'none';
+                authBox.style.display = 'none';         // Ẩn Form đăng nhập
+                uploadWrapper.style.display = 'block';   // Hiện khu vực đăng file công khai
             } else {
-                menuClient.classList.remove('active');
-                menuUpload.classList.add('active');
-                tabClientContent.classList.remove('active');
-                tabUploadContent.classList.add('active');
+                errorText.style.display = 'block';       // Báo lỗi nhập sai
+            }
+        });
+
+        /* ================= XỬ LÝ TẢI FILE LÊN ĐỘNG VÀ UPDATE SANG TAB CLIENT ================= */
+        const fileInput = document.getElementById('fileInput');
+        const emptyState = document.getElementById('emptyState');
+        const fileGrid = document.getElementById('fileGrid');
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+                
+                // Thêm thông tin file vào mảng tạm thời
+                uploadedFiles.push({
+                    name: file.name,
+                    size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
+                    time: 'Vừa xong'
+                });
+
+                // Cập nhật giao diện hiển thị danh sách bên Tab Client
+                renderFiles();
+                
+                // Tự động chuyển hướng người dùng về Tab Client xem thành quả lập tức
+                menuClient.click();
+                
+                // Reset input file để có thể up tiếp
+                fileInput.value = '';
+            }
+        });
+
+        function renderFiles() {
+            if (uploadedFiles.length === 0) {
+                emptyState.style.display = 'block';
+                fileGrid.style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                fileGrid.style.display = 'grid';
+                
+                // Xây dựng cấu trúc HTML cho từng File thực tế vừa đăng
+                fileGrid.innerHTML = uploadedFiles.map(file => `
+                    <div class="file-card">
+                        <div class="file-icon">📁</div>
+                        <div class="file-details">
+                            <h3>${file.name}</h3>
+                            <p>Kích thước: ${file.size} • Trạng thái: Đã đồng bộ</p>
+                        </div>
+                        <span class="active-badge">Online</span>
+                    </div>
+                `).join('');
             }
         }
-
-        // Hiệu ứng kéo thả file cơ bản trực quan
-        const dropZone = document.getElementById('dropZone');
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                dropZone.style.borderColor = 'var(--accent-cyan)';
-                dropZone.style.background = 'rgba(0, 240, 255, 0.05)';
-            }, false);
-        });
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                dropZone.style.borderColor = 'var(--border-color)';
-                dropZone.style.background = 'transparent';
-            }, false);
-        });
     </script>
 </body>
 </html>
